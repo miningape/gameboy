@@ -1,31 +1,32 @@
 package instructions
 
 import "../"
+import "../operands"
 
-valueInA :: proc(c: ^cpu.Cpu) -> Operand {
+valueInA :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.a
 }
 
-valueInB :: proc(c: ^cpu.Cpu) -> Operand {
+valueInB :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.b
 }
 
-valueInC :: proc(c: ^cpu.Cpu) -> Operand {
+valueInC :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.c
 }
 
-valueInD :: proc(c: ^cpu.Cpu) -> Operand {
+valueInD :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.d
 }
 
-valueInE :: proc(c: ^cpu.Cpu) -> Operand {
+valueInE :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.e
 }
 
-valueInH :: proc(c: ^cpu.Cpu) -> Operand {
+valueInH :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.h
 }
 
-valueInL :: proc(c: ^cpu.Cpu) -> Operand {
+valueInL :: proc(c: ^cpu.Cpu) -> operands.Operand {
   return c.registers.l
 }
