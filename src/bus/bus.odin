@@ -21,4 +21,6 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
   return bus.rom[location]
 }
 
-write :: proc() {}
+write :: proc(bus: ^Bus, location: u16, data: byte) {
+  bus.rom[location] = data
+}

@@ -27,6 +27,13 @@ createCpu :: proc(bus: ^bus.Bus) -> Cpu {
   }
 }
 
+readBC :: proc(cpu: ^Cpu) -> u16 {
+  upper := cpu.registers.b
+  lower := cpu.registers.c
+
+  return u16(upper) << 8 |  u16(lower)
+}
+
 getPC :: proc(cpu: ^Cpu) -> u16 {
   return cpu.registers.pc
 }
@@ -34,4 +41,3 @@ getPC :: proc(cpu: ^Cpu) -> u16 {
 incrementPC :: proc(cpu: ^Cpu) {
   cpu.registers.pc += 1
 }
-
