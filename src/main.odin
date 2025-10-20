@@ -22,4 +22,7 @@ main :: proc () {
   fmt.println()
   fmt.print("Value in register BC: ")
   fmt.printf("%02X%02X\n", cpu.registers.b, cpu.registers.c) 
+
+  fmt.print("Value in register AF: ")
+  fmt.printf("%02X%02X\n", cpu.registers.a, cpu.registers.f) 
 }

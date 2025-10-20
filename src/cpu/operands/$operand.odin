@@ -2,43 +2,101 @@ package operands
 
 import "../"
 
-Operand :: union {
+Register :: union #no_nil {
+  ^cpu.Register,
+  ^cpu.Register16,
+  [2]^cpu.Register,
+}
+
+Operand :: union #no_nil {
+  u8,
   u16,
-  byte,
-  proc(c: ^cpu.Cpu, o: Operand)
+  Register,
 }
 
-@(private)
-operandIsU8 :: proc(operand: Operand) -> byte {
-  data, ok := operand.(byte)
-
+registerIsU8 :: proc(r: Register) -> u8 {
+  register, ok := r.(^cpu.Register)
+  
   if !ok {
-    panic("Could not read operand for u8")
+    panic("Tried to read a 16-bit register as 8-bit")
   }
 
-  return data
+  return register^
 }
 
 @(private)
-operandIsU16 :: proc(operand: Operand) -> u16 {
-  data, ok := operand.(u16)
-
-  if !ok {
-    bt: byte
-    bt, ok = operand.(byte)
-
-    if !ok {
-      panic("Could not read operand for u16")
-    }
-
-    data = u16(bt)
+operandIsU8 :: proc(op: Operand) -> byte {
+  switch operand in op {
+    case u8:
+      return operand
+    case u16:
+      panic("Tried to read a u16 as a u8")
+    case Register:
+      return registerIsU8(operand)
   }
 
-  return data
+  panic("Unrecognized operand type")
+}
+
+registerIsU16 :: proc(r: Register) -> u16 {
+  switch register in r {
+    case ^cpu.Register:
+      return u16(register^)
+
+    case ^cpu.Register16:
+      return register^
+
+    case [2]^cpu.Register:
+      return u16(register[0]^) << 8 | u16(register[1]^)
+  }
+
+  panic("Unrecognized register type")
 }
 
 @(private)
-intoRegisterPair :: proc(upper: ^cpu.Register, lower: ^cpu.Register, data: u16) {
+operandIsU16 :: proc(op: Operand) -> u16 {
+  switch operand in op {
+    case u8:
+      return u16(operand)
+
+    case u16:
+      return operand
+
+    case Register:
+      return registerIsU16(operand)
+  }
+
+  panic("Unrecognized operand type")
+}
+
+into8BitRegister :: proc(register: ^cpu.Register, op: Operand) {
+  data := operandIsU8(op)
+  register^ = data
+}
+
+@(private)
+intoRegisterPair :: proc(upper: ^u8, lower: ^u8, data: u16) {
   upper^ = u8(data >> 8)
   lower^ = u8(data)
+}
+
+into16BitRegisterPair :: proc(upper: ^cpu.Register, lower: ^cpu.Register, op: Operand) {
+  data := operandIsU16(op)
+  intoRegisterPair(upper, lower, data)
+}
+
+into16BitRegister :: proc(register: ^cpu.Register16, op: Operand) {
+  data := operandIsU16(op)
+  register^ = data
+}
+
+intoRegister :: proc(register: Register, data: Operand) {
+  switch r in register {
+    case ^cpu.Register:
+      into8BitRegister(r, data)
+    case ^cpu.Register16:
+      into16BitRegister(r, data)
+    case [2]^cpu.Register:
+      into16BitRegisterPair(r[0], r[1], data)
+  }
 }

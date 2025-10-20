@@ -2,12 +2,17 @@ package operands
 
 import "../"
 
-@(private = "file")
-intoC_ :: proc(c: ^cpu.Cpu, operand: Operand) {
-  data := operandIsU8(operand)
-  c.registers.c = data
-}
+// @(private = "file")
+// intoC_ :: proc(c: ^cpu.Cpu, operand: Operand) {
+//   data := operandIsU8(operand)
+//   c.registers.c = data
+// }
 
-intoC :: proc(c: ^cpu.Cpu) -> Operand {
-  return intoC_
+// intoC :: proc(c: ^cpu.Cpu) -> Operand {
+//   return intoC_
+// }
+
+C :: proc(c: ^cpu.Cpu) -> Operand {
+  register: Register = &c.registers.c
+  return register
 }
