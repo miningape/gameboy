@@ -24,7 +24,6 @@ registerIsU8 :: proc(r: Register) -> u8 {
   return register^
 }
 
-@(private)
 operandIsU8 :: proc(op: Operand) -> byte {
   switch operand in op {
     case u8:
@@ -53,7 +52,6 @@ registerIsU16 :: proc(r: Register) -> u16 {
   panic("Unrecognized register type")
 }
 
-@(private)
 operandIsU16 :: proc(op: Operand) -> u16 {
   switch operand in op {
     case u8:

@@ -6,8 +6,9 @@ import e_cpu "cpu"
 import "bus"
 import "cpu/instructions"
 
-
 emulate :: proc(cpu: ^e_cpu.Cpu) {
+  read := instructions.MAPPING()
+
   fmt.println("Starting emulation...")
   fmt.println()
 
@@ -16,7 +17,7 @@ emulate :: proc(cpu: ^e_cpu.Cpu) {
 
     opcode := bus.read(cpu.bus, pc)
 
-    instruction := instructions.MAPPING[opcode]
+    instruction := read[opcode]
     instruction.operation(cpu, instruction)
     
     e_cpu.incrementPC(cpu)

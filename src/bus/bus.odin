@@ -24,3 +24,7 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
 write :: proc(bus: ^Bus, location: u16, data: byte) {
   bus.rom[location] = data
 }
+
+increment :: proc(bus: ^Bus, location: u16) {
+  bus.rom[location] += 1
+}
