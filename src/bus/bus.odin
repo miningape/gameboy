@@ -1,30 +1,79 @@
 package bus
 
 // Will need to fill out more later 
-// Memory map: https://gbdev.io/pandocs/Memory_Map.html
+// Memory map: 
 // Memory Bank Controllers (MBC): https://gbdev.io/pandocs/MBCs.html
 
 import "core:fmt"
 
+// Memory map: https://gbdev.io/pandocs/Memory_Map.html
+// ----------------------------------------------------
+// 0xFFFF - Interrup Enable register (IE)
+// 0xFF80 - High RAM (fast)
+// 0xFF00 - I/O Registers
+// 0xFEA0 - Not usable
+// 0xFE00 - OAM
+// 0xE000 - Echo RAM, prohibited
+// 0xC000 - RAM, Work RAM
+// 0xA000 - RAM, External
+// 0x8000 - VRAM
+// 0x4000 - ROM, Cartridge switchable bank
+// 0x0000 - ROM, Cartridge bank 0
+
 Bus :: struct {
-  rom: ^[]byte
+  rom: ^[]byte,
+  ram: []byte
 }
 
 createBus :: proc(rom: ^[]byte) -> Bus {
   fmt.println("Creating bus...")
   return Bus {
-    rom
+    rom, // Maybe bus should read rom?
+    make([]byte, 0x2000) // 8 KiB work ram
   }
 }
 
 read :: proc(bus: ^Bus, location: u16) -> byte {
-  return bus.rom[location]
+  switch location {
+    // ROM cartridge, including 1 switch bank (i.e. no switching)
+    case 0x0000..<0x8000:
+      return bus.rom[location]
+
+    // Work RAM
+    case 0xC000..<0xE000:
+      return bus.ram[location - 0xC000]
+  }
+
+  fmt.printfln("Reading memory: 0x%04X", location)
+  panic("Tried to access an unmapped area of memory")
 }
 
 write :: proc(bus: ^Bus, location: u16, data: byte) {
-  bus.rom[location] = data
+  switch location {
+    // ROM cartridge, including 1 switch bank (i.e. no switching)
+    case 0x0000..<0x8000:
+      panic("Cannot write to ROM cartridge")
+
+    // Work RAM
+    case 0xC000..<0xE000:
+      bus.ram[location - 0xC000] = data
+  }
+
+  fmt.printfln("Writing memory: 0x%04X - data: 0x%02X", location, data)
+  panic("Tried to access an unmapped area of memory")
 }
 
 increment :: proc(bus: ^Bus, location: u16) {
-  bus.rom[location] += 1
+  switch location {
+    // ROM cartridge, including 1 switch bank (i.e. no switching)
+    case 0x0000..<0x8000:
+      panic("Cannot write to ROM cartridge")
+
+    // Work RAM
+    case 0xC000..<0xE000:
+      bus.ram[location - 0xC000] += 1
+  }
+  
+  fmt.printfln("Writing memory (inc): 0x%04X - data: 0x%02X", location)
+  panic("Tried to access an unmapped area of memory")
 }
