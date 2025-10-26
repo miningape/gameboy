@@ -7,9 +7,26 @@ import "../../bus"
 
 
 // Might be easier to just do bitshifting since it automatically accounts for endianess
-SharedMem :: struct #raw_union {
+// Platform endian safe merging of registers
+ComboRegister :: struct #raw_union {
   shared: u16,
   split: [2]u8
+}
+
+toComboRegister :: proc(registers: [2]^cpu.Register) -> ComboRegister {
+  return {
+    split = ({ registers[1]^, registers[0]^ }) when 
+                os.ENDIAN == .Little else 
+            ({reg[0]^, reg[1]^})
+  }
+}
+
+fromComboRegister :: proc(register: ComboRegister) -> (u8, u8) {
+  when os.ENDIAN == .Little {
+    return register.split[1], register.split[0]
+  } else {
+    return register.split[0], register.split[1]
+  }
 }
 
 INC_register :: proc(register: operands.Register) {
@@ -21,19 +38,11 @@ INC_register :: proc(register: operands.Register) {
       reg^ += 1
 
     case [2]^cpu.Register:
-      mem: SharedMem = {
-        split = ({ reg[1]^, reg[0]^ }) when os.ENDIAN == .Little else ({reg[0]^, reg[1]^})
-      }
+      r := toComboRegister(reg)
 
-      mem.shared += 1
+      r.shared += 1
 
-      when os.ENDIAN == .Little {
-        reg[0]^ = mem.split[1]
-        reg[1]^ = mem.split[0]
-      } else {
-        reg[0]^ = mem.split[0]
-        reg[1]^ = mem.split[1]
-      }
+      reg[0]^, reg[1]^ = fromComboRegister(r)
   }
 }
 

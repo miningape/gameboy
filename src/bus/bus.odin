@@ -77,3 +77,18 @@ increment :: proc(bus: ^Bus, location: u16) {
   fmt.printfln("Writing memory (inc): 0x%04X - data: 0x%02X", location)
   panic("Tried to access an unmapped area of memory")
 }
+
+decrement :: proc(bus: ^Bus, location: u16) {
+  switch location {
+    // ROM cartridge, including 1 switch bank (i.e. no switching)
+    case 0x0000..<0x8000:
+      panic("Cannot write to ROM cartridge")
+
+    // Work RAM
+    case 0xC000..<0xE000:
+      bus.ram[location - 0xC000] -= 1
+  }
+  
+  fmt.printfln("Writing memory (inc): 0x%04X - data: 0x%02X", location)
+  panic("Tried to access an unmapped area of memory")
+}
