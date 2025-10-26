@@ -29,13 +29,16 @@ fromComboRegister :: proc(register: ComboRegister) -> (u8, u8) {
   }
 }
 
-INC_register :: proc(register: operands.Register) {
+@(private)
+INC_register :: proc(register: operands.Register) -> u16 {
   switch reg in register {
     case ^cpu.Register:
       reg^ += 1
+      return u16(reg^)
 
     case ^cpu.Register16:
       reg^ += 1
+      return reg^
 
     case [2]^cpu.Register:
       r := toComboRegister(reg)
@@ -43,21 +46,40 @@ INC_register :: proc(register: operands.Register) {
       r.shared += 1
 
       reg[0]^, reg[1]^ = fromComboRegister(r)
+
+      return r.shared
   }
+
+  panic("INC - Unknown register kind")
 }
 
-INC_pointer :: proc(c: ^cpu.Cpu, pointer: Pointer) {
+@(private)
+INC_pointer :: proc(c: ^cpu.Cpu, pointer: Pointer) -> u16 {
   location := operands.operandIsU16(pointer.to(c))
-  bus.increment(c.bus, location)
+  return u16(bus.increment(c.bus, location))
 }
 
 INC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  result: u16
+
   switch op in instruction.left {
     case Pointer:
-      INC_pointer(c, op)
+      result = INC_pointer(c, op)
 
     case proc(c: ^cpu.Cpu) -> operands.Operand:
       register := op(c).(operands.Register)
-      INC_register(register)
-    }
+      result = INC_register(register)
+  }
+
+  if (instruction.flags.z) {
+    cpu.setFlagZ(c, result == 0)
+  }
+
+  if (instruction.flags.n) {
+    cpu.setFlagN(c, false)
+  }
+
+  if (instruction.flags.h) {
+    cpu.setFlagH(c, (result - 1) & 0x0F == 0x0F)
+  }
 }

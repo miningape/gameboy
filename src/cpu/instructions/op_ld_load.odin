@@ -28,4 +28,6 @@ LD :: proc(c: ^cpu.Cpu, i: Instruction) {
     case proc(c: ^cpu.Cpu) -> op.Operand:
       LD_register(c, left, i.right)
   }
+
+  // LD never affects flags
 }
