@@ -49,7 +49,7 @@ DEC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   }
 
   if (instruction.flags.n) {
-    cpu.setFlagN(c, false)
+    cpu.setFlagN(c, true)
   }
 
   if (instruction.flags.h) {
