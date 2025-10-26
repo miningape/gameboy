@@ -22,4 +22,6 @@ emulate :: proc(cpu: ^e_cpu.Cpu) {
     
     e_cpu.incrementPC(cpu)
   }
+
+  fmt.println(e_cpu.sprint(cpu))
 }

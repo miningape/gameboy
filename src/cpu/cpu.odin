@@ -1,5 +1,6 @@
 package cpu
 
+import "core:strings"
 import "core:fmt"
 
 import "../bus"
@@ -40,4 +41,25 @@ getPC :: proc(cpu: ^Cpu) -> u16 {
 
 incrementPC :: proc(cpu: ^Cpu) {
   cpu.registers.pc += 1
+}
+
+sprint :: proc(cpu: ^Cpu) -> string {
+  builder := strings.builder_make()
+
+  fmt.sbprintln(&builder, "----- REGISTERS -------- COMBO --")
+  fmt.sbprintln(&builder, "+---------+---------+")
+  fmt.sbprintfln(&builder, "| A: 0x%02X | F: 0x%02X | -> 0x%02X%02X", cpu.registers.a, cpu.registers.f, cpu.registers.a, cpu.registers.f)
+  fmt.sbprintln(&builder, "+---------+---------+")
+  fmt.sbprintfln(&builder, "| B: 0x%02X | C: 0x%02X | -> 0x%02X%02X", cpu.registers.b, cpu.registers.c, cpu.registers.b, cpu.registers.c)
+  fmt.sbprintln(&builder, "+---------+---------+")
+  fmt.sbprintfln(&builder, "| D: 0x%02X | E: 0x%02X | -> 0x%02X%02X", cpu.registers.d, cpu.registers.e, cpu.registers.d, cpu.registers.e)
+  fmt.sbprintln(&builder, "+---------+---------+")
+  fmt.sbprintfln(&builder, "| H: 0x%02X | L: 0x%02X | -> 0x%02X%02X", cpu.registers.h, cpu.registers.l, cpu.registers.h, cpu.registers.l)
+  fmt.sbprintln(&builder, "+---------+---------+")
+  fmt.sbprintfln(&builder, "| PC:   0x%04X      |", cpu.registers.pc)
+  fmt.sbprintln(&builder, "+---------+---------+")
+  fmt.sbprintfln(&builder, "| SP:   0x%04X      |", cpu.registers.sp)
+  fmt.sbprintln(&builder, "+---------+---------+")
+
+  return strings.to_string(builder)
 }
