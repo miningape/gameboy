@@ -3,16 +3,6 @@ package operands
 import "../"
 import "../../bus"
 
-// @(private = "file")
-// intoBC_ :: proc(c: ^cpu.Cpu, operand: Operand) {
-//   data := operandIsU16(operand)
-//   intoRegisterPair(&c.registers.b, &c.registers.c, data)
-// }
-
-// intoBC :: proc(c: ^cpu.Cpu) -> Operand {
-//   return intoBC_
-// }
-
 BC :: proc(c: ^cpu.Cpu) -> Operand {
   r: Register = [2]^cpu.Register {
     &c.registers.b,
@@ -22,10 +12,9 @@ BC :: proc(c: ^cpu.Cpu) -> Operand {
   return r
 }
 
-// intoRamBC :: proc(c: ^cpu.Cpu) -> Operand {
-//   return proc(c: ^cpu.Cpu, o: Operand) {
-//     location := cpu.readBC(c)
-     
-//     bus.write(c.bus, location, c.registers.a)
-//   }
-// }
+BC_ptr :: proc(c: ^cpu.Cpu) -> Operand {
+  location := cpu.unify(c.registers.b, c.registers.c)
+
+  return Pointer(bus.pointer(c.bus, location))
+}
+

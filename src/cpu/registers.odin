@@ -11,3 +11,11 @@ Registers :: struct {
   pc: Register16,
   sp: Register16
 }
+
+unify :: proc(upper: Register, lower: Register) -> u16 {
+  return u16(upper) << 8 | u16(lower)
+}
+
+split :: proc(register: u16) -> (Register, Register) {
+  return u8(register >> 8), u8(register)
+}

@@ -8,10 +8,13 @@ Register :: union #no_nil {
   [2]^cpu.Register,
 }
 
+Pointer :: distinct ^byte
+
 Operand :: union #no_nil {
   u8,
   u16,
   Register,
+  Pointer
 }
 
 registerIsU8 :: proc(r: Register) -> u8 {
@@ -30,6 +33,8 @@ operandIsU8 :: proc(op: Operand) -> byte {
       return operand
     case u16:
       panic("Tried to read a u16 as a u8")
+    case Pointer: 
+      return operand^
     case Register:
       return registerIsU8(operand)
   }
@@ -59,6 +64,9 @@ operandIsU16 :: proc(op: Operand) -> u16 {
 
     case u16:
       return operand
+
+    case Pointer:
+      return u16(operand^)
 
     case Register:
       return registerIsU16(operand)

@@ -6,7 +6,7 @@ import "../operands"
 import "../../bus"
 
 
-// Might be easier to just do bitshifting since it automatically accounts for endianess
+// Might be easier to just do bitshifting since it automatically accounts for endianess - see cpu.split / .unify
 // Platform endian safe merging of registers
 ComboRegister :: struct #raw_union {
   shared: u16,
@@ -30,49 +30,54 @@ fromComboRegister :: proc(register: ComboRegister) -> (u8, u8) {
 }
 
 @(private)
-INC_register :: proc(register: operands.Register) -> u16 {
+INC_register :: proc(register: operands.Register) -> (bool, u8) {
   switch reg in register {
     case ^cpu.Register:
       reg^ += 1
-      return u16(reg^)
+      return true, reg^
 
     case ^cpu.Register16:
       reg^ += 1
-      return reg^
+      return false, 0
 
     case [2]^cpu.Register:
       r := toComboRegister(reg)
-
       r.shared += 1
-
       reg[0]^, reg[1]^ = fromComboRegister(r)
 
-      return r.shared
+      return false, 0
   }
 
-  panic("INC - Unknown register kind")
-}
-
-@(private)
-INC_pointer :: proc(c: ^cpu.Cpu, pointer: Pointer) -> u16 {
-  location := operands.operandIsU16(pointer.to(c))
-  return u16(bus.increment(c.bus, location))
+  panic("INC - unrecognized register")
 }
 
 INC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
-  result: u16
+  value: u8
+  isU8Operation: bool
 
-  switch op in instruction.left {
-    case Pointer:
-      result = INC_pointer(c, op)
+  switch operand in instruction.left(c) {
+    case operands.Register:
+      isU8Operation, value = INC_register(operand)
 
-    case proc(c: ^cpu.Cpu) -> operands.Operand:
-      register := op(c).(operands.Register)
-      result = INC_register(register)
+    case operands.Pointer:
+      operand^ += 1
+
+      isU8Operation = true
+      value = operand^
+
+    case u8:
+      panic("Tried to increment u8")
+
+    case u16:
+      panic("Tried to increment u16")
+  }
+
+  if (!isU8Operation) {
+    return
   }
 
   if (instruction.flags.z) {
-    cpu.setFlagZ(c, result == 0)
+    cpu.setFlagZ(c, value == 0)
   }
 
   if (instruction.flags.n) {
@@ -80,6 +85,6 @@ INC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   }
 
   if (instruction.flags.h) {
-    cpu.setFlagH(c, (result - 1) & 0x0F == 0x0F)
+    cpu.setFlagH(c, (value - 1) & 0x0F == 0x0F)
   }
 }

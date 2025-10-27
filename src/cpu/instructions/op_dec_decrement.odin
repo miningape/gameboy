@@ -1,47 +1,53 @@
 package instructions
 
 import "../"
-import "../operands"
-import "../../bus"
+import op "../operands"
 
-DEC_register :: proc(register: operands.Register) -> u16 {
+@(private)
+DEC_register :: proc(register: op.Register) -> (bool, u8) {
   switch reg in register {
     case ^cpu.Register:
       reg^ -= 1
-      return u16(reg^)
+      return true, reg^
 
     case ^cpu.Register16:
       reg^ -= 1
-      return reg^
+      return false, 0
 
     case [2]^cpu.Register:
       r := toComboRegister(reg)
-
       r.shared -= 1
-
       reg[0]^, reg[1]^ = fromComboRegister(r)
 
-      return r.shared
+      return false, 0
   }
 
   panic("DEC - Unknown register kind")
 }
 
-DEC_pointer :: proc(c: ^cpu.Cpu, pointer: Pointer) -> u16 {
-  location := operands.operandIsU16(pointer.to(c))
-  return u16(bus.decrement(c.bus, location))
-}
-
 DEC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
-  result: u16
+  result: u8
+  isU8Operation: bool
+  
+  switch operand in instruction.left(c) {
+    case op.Register:
+      isU8Operation, result = DEC_register(operand)
 
-  switch op in instruction.left {
-    case Pointer:
-      result = DEC_pointer(c, op)
+    case op.Pointer:
+      operand^ -= 1
 
-    case proc(c: ^cpu.Cpu) -> operands.Operand:
-      register := op(c).(operands.Register)
-      result = DEC_register(register)
+      result = operand^
+      isU8Operation = true
+
+    case u8:
+      panic("Cannot DEC a u8")
+      
+    case u16:
+      panic("Cannot DEC a u16")
+  }
+
+  if (!isU8Operation) {
+    return
   }
 
   if (instruction.flags.z) {
