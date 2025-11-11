@@ -1,5 +1,6 @@
 package cpu
 
+import "core:log"
 import "core:strings"
 import "core:fmt"
 
@@ -12,7 +13,7 @@ Cpu :: struct {
 }
 
 createCpu :: proc(bus: ^bus.Bus) -> Cpu {
-  fmt.println("Creating cpu...")
+  log.debug("Creating cpu...")
   return Cpu {
     done = false,
     // State following execution of boot ROM
@@ -45,7 +46,7 @@ incrementPC :: proc(cpu: ^Cpu) {
 
 sprint :: proc(cpu: ^Cpu) -> string {
   builder := strings.builder_make()
-
+  
   fmt.sbprintln(&builder, "----- REGISTERS -------- COMBO --")
   fmt.sbprintln(&builder, "+---------+---------+")
   fmt.sbprintfln(&builder, "| A: 0x%02X | F: 0x%02X | -> 0x%02X%02X", cpu.registers.a, cpu.registers.f, cpu.registers.a, cpu.registers.f)
@@ -62,4 +63,10 @@ sprint :: proc(cpu: ^Cpu) -> string {
   fmt.sbprintln(&builder, "+---------+---------+")
 
   return strings.to_string(builder)
+}
+
+// Cleans up any references / memory the CPU owns
+cleanup :: proc(cpu: ^Cpu) {
+  delete(cpu.bus.ram)
+  delete(cpu.bus.rom^)
 }

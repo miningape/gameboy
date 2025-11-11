@@ -1,6 +1,6 @@
 package main
 
-import "core:fmt"
+import "core:log"
 
 import e_cpu "cpu"
 import "bus"
@@ -8,9 +8,8 @@ import "cpu/instructions"
 
 emulate :: proc(cpu: ^e_cpu.Cpu) {
   read := instructions.MAPPING()
-
-  fmt.println("Starting emulation...")
-  fmt.println()
+  
+  log.debug("Starting emulation...")
 
   for !cpu.done {
     pc := e_cpu.getPC(cpu)
@@ -23,5 +22,7 @@ emulate :: proc(cpu: ^e_cpu.Cpu) {
     e_cpu.incrementPC(cpu)
   }
 
-  fmt.println(e_cpu.sprint(cpu))
+  l := e_cpu.sprint(cpu)
+  defer delete(l)
+  log.debug("\n", l, sep="")
 }

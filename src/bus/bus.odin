@@ -1,10 +1,10 @@
 package bus
 
+import "core:log"
+
 // Will need to fill out more later 
 // Memory map: 
 // Memory Bank Controllers (MBC): https://gbdev.io/pandocs/MBCs.html
-
-import "core:fmt"
 
 // Memory map: https://gbdev.io/pandocs/Memory_Map.html
 // ----------------------------------------------------
@@ -26,7 +26,7 @@ Bus :: struct {
 }
 
 createBus :: proc(rom: ^[]byte) -> Bus {
-  fmt.println("Creating bus...")
+  log.debug("Creating bus...")
   return Bus {
     rom, // Maybe bus should read rom?
     make([]byte, 0x2000) // 8 KiB work ram
@@ -44,7 +44,7 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
       return bus.ram[location - 0xC000]
   }
 
-  fmt.printfln("Reading memory: 0x%04X", location)
+  log.debug("Reading memory: 0x%04X", location)
   panic("Tried to access an unmapped area of memory")
 }
 
@@ -59,7 +59,7 @@ write :: proc(bus: ^Bus, location: u16, data: byte) {
       bus.ram[location - 0xC000] = data
   }
 
-  fmt.printfln("Writing memory: 0x%04X - data: 0x%02X", location, data)
+  log.debug("Writing memory: 0x%04X - data: 0x%02X", location, data)
   panic("Tried to access an unmapped area of memory")
 }
 
@@ -74,6 +74,6 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
       return &bus.ram[location - 0xC000]
   }
 
-  fmt.printfln("Pointer to (inc): 0x%04X", location)
+  log.debug("Pointer to (inc): 0x%04X", location)
   panic("Tried to access an unmapped area of memory")
 }

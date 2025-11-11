@@ -1,0 +1,26 @@
+package cpu_test
+
+import "core:testing"
+
+import _bus "../../src/bus"
+import _cpu "../../src/cpu"
+import _emulator "../../src"
+import "../lib"
+
+@require import "./add"
+
+LD_BC_u16 :: 0x01
+
+@(test)
+shouldLoad :: proc (t: ^testing.T) {
+  rom := lib.createRom([]byte{ LD_BC_u16, 0x69, 0x69 })
+  bus := _bus.createBus(&rom)
+
+  cpu := _cpu.createCpu(&bus)
+  defer _cpu.cleanup(&cpu)
+
+  _emulator.emulate(&cpu)
+
+  testing.expect(t, cpu.registers.b == 0x69, "poop")
+  testing.expect(t, cpu.registers.c == 0x69, "poo2")
+}

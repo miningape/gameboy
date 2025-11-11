@@ -8,7 +8,7 @@
   "profile": "default",
   "odin_command": "odin",
   "profiles": [
-    { "name": "default", "checker_path": ["src"] },
+    { "name": "default", "checker_path": ["src", "test"] },
     {
       "name": "linux_profile",
       "os": "linux",
