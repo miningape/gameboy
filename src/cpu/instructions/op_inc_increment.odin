@@ -53,7 +53,7 @@ INC_register :: proc(register: operands.Register) -> (bool, u8) {
 
 INC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   cpu.incrementPC(c)
-  
+
   value: u8
   isU8Operation: bool
 
@@ -67,11 +67,17 @@ INC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
       isU8Operation = true
       value = operand^
 
-    case u8:
-      panic("Tried to increment u8")
+    case operands.Literal:
+      switch literal in operand {
+        case u8:
+          panic("Tried to increment u8")
+    
+        case u16:
+          panic("Tried to increment u16")
 
-    case u16:
-      panic("Tried to increment u16")
+        case bool:
+          panic("Tried to increment boolean")
+      }
   }
 
   if (!isU8Operation) {

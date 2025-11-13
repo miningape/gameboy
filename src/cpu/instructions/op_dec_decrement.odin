@@ -41,11 +41,18 @@ DEC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
       result = operand^
       isU8Operation = true
 
-    case u8:
-      panic("Cannot DEC a u8")
-      
-    case u16:
-      panic("Cannot DEC a u16")
+    case op.Literal:
+      switch literal in operand {
+        case u8:
+          panic("Cannot DEC a u8")
+          
+        case u16:
+          panic("Cannot DEC a u16")
+
+        case bool:
+          panic("Cannot DEC a boolean")
+      }
+
   }
 
   if (!isU8Operation) {

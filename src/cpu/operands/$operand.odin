@@ -2,6 +2,12 @@ package operands
 
 import "../"
 
+Literal :: union #no_nil {
+  u8,
+  u16,
+  bool
+}
+
 Register :: union #no_nil {
   ^cpu.Register,
   ^cpu.Register16,
@@ -11,8 +17,7 @@ Register :: union #no_nil {
 Pointer :: distinct ^byte
 
 Operand :: union #no_nil {
-  u8,
-  u16,
+  Literal,
   Register,
   Pointer
 }
@@ -29,10 +34,15 @@ registerIsU8 :: proc(r: Register) -> u8 {
 
 operandIsU8 :: proc(op: Operand) -> byte {
   switch operand in op {
-    case u8:
-      return operand
-    case u16:
-      panic("Tried to read a u16 as a u8")
+    case Literal:
+      switch literal in operand {
+        case u8:
+          return literal
+        case u16:
+          panic("Tried to read a u16 as a u8")
+        case bool:
+          panic("Tried to read a bool as u8")
+      }
     case Pointer: 
       return operand^
     case Register:
@@ -59,11 +69,17 @@ registerIsU16 :: proc(r: Register) -> u16 {
 
 operandIsU16 :: proc(op: Operand) -> u16 {
   switch operand in op {
-    case u8:
-      return u16(operand)
-
-    case u16:
-      return operand
+    case Literal:
+      switch literal in operand {
+        case u8:
+          return u16(literal)
+    
+        case u16:
+          return literal
+        
+        case bool:
+          panic("Tried to read boolean as a u16")
+      }
 
     case Pointer:
       return u16(operand^)

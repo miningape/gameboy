@@ -24,7 +24,7 @@ nextByte :: proc(c: ^cpu.Cpu) -> op.Operand {
   value := bus.read(c.bus, c.registers.pc)
   cpu.incrementPC(c)
 
-  return value
+  return op.Literal(value)
 }
 
 next2Bytes :: proc(c: ^cpu.Cpu) -> op.Operand {
@@ -32,7 +32,7 @@ next2Bytes :: proc(c: ^cpu.Cpu) -> op.Operand {
   cpu.incrementPC(c)
   upper := bus.read(c.bus, c.registers.pc)
 
-  return  u16(lower) | u16(upper) << 8
+  return  op.Literal(u16(lower) | u16(upper) << 8)
 }
 
 HALT :: proc(c: ^cpu.Cpu, i: Instruction) {
