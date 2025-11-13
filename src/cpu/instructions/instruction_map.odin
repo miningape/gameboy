@@ -31,13 +31,28 @@ next2Bytes :: proc(c: ^cpu.Cpu) -> op.Operand {
   lower := bus.read(c.bus, c.registers.pc)
   cpu.incrementPC(c)
   upper := bus.read(c.bus, c.registers.pc)
+  cpu.incrementPC(c)
 
   return  op.Literal(u16(lower) | u16(upper) << 8)
 }
 
-HALT :: proc(c: ^cpu.Cpu, i: Instruction) {
-  cpu.incrementPC(c)
+Z :: proc(c: ^cpu.Cpu) -> op.Operand {
+  return cpu.getFlagZ(c) == true
+}
 
+NZ :: proc(c: ^cpu.Cpu) -> op.Operand {
+  return cpu.getFlagZ(c) == false
+}
+
+C :: proc(c: ^cpu.Cpu) -> op.Operand {
+  return cpu.getFlagC(c) == true
+}
+
+NC :: proc(c: ^cpu.Cpu) -> op.Operand {
+  return cpu.getFlagC(c) == false
+}
+
+HALT :: proc(c: ^cpu.Cpu, i: Instruction) {
   log.debug("Halted")
   c.done = true
 }
@@ -62,9 +77,9 @@ MAPPING :: proc() -> [0x100]Instruction {
     /* 9 */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* A */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* B */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
-    /* C */ NOOP,                        NOOP,                          NOOP,                         {JP, next2Bytes, nil, F_NO},  NOOP,                               NOOP,                               {ADD, op.A, nextByte, F_ALL},    NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
-    /* D */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
-    /* E */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        {ADD, op.SP, nextByte, F_ALL}, NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
+    /* C */ NOOP,                        NOOP,                          {JP, NZ, next2Bytes, F_NO},   {JP, next2Bytes, nil, F_NO},  NOOP,                               NOOP,                               {ADD, op.A, nextByte, F_ALL},    NOOP,                        NOOP,                          NOOP,                   {JP, Z, next2Bytes, F_NO},    NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
+    /* D */ NOOP,                        NOOP,                          {JP, NC, next2Bytes, F_NO},   NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   {JP, C, next2Bytes, F_NO},    NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
+    /* E */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        {ADD, op.SP, nextByte, F_ALL}, {JP, op.HL, nil, F_NO}, NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* F */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
   }
 }

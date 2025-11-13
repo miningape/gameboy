@@ -5,8 +5,6 @@ import "core:testing"
 import "../../lib"
 import _cpu "../../../src/cpu"
 
-ADD_SP_i8 :: 0xE8
-
 @(private)
 negate :: proc(num: u8) -> u8 {
   return (~num) + 1
@@ -16,7 +14,7 @@ negate :: proc(num: u8) -> u8 {
 shouldAdd :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, 0x0F }
+  instructions := []byte{ lib.ADD_SP_i8, 0x0F }
 
   cpu := lib.emulate(instructions, proc(cpu: ^Cpu) {
     cpu.registers.sp = 0x0000
@@ -33,7 +31,7 @@ shouldAdd :: proc(t: ^testing.T) {
 shouldAddAndOverflowToNextBit :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, 0x7F } // 0x7F is the largest signed 8-bit integer
+  instructions := []byte{ lib.ADD_SP_i8, 0x7F } // 0x7F is the largest signed 8-bit integer
 
   cpu := lib.emulate(instructions, proc(cpu: ^Cpu) {
     cpu.registers.sp = 0x0081
@@ -50,7 +48,7 @@ shouldAddAndOverflowToNextBit :: proc(t: ^testing.T) {
 shouldAddAndOverflow :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, 0x01 }
+  instructions := []byte{ lib.ADD_SP_i8, 0x01 }
 
   cpu := lib.emulate(instructions, proc(cpu: ^Cpu) {
     cpu.registers.sp = 0xFFFF
@@ -67,7 +65,7 @@ shouldAddAndOverflow :: proc(t: ^testing.T) {
 shouldSub :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, negate(0x7F)}
+  instructions := []byte{ lib.ADD_SP_i8, negate(0x7F)}
 
   cpu := lib.emulate(instructions, proc(cpu: ^Cpu) {
     cpu.registers.sp = 0x017F
@@ -84,7 +82,7 @@ shouldSub :: proc(t: ^testing.T) {
 shouldSubAndUnderflowToNextBit :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, negate(0x7F) }
+  instructions := []byte{ lib.ADD_SP_i8, negate(0x7F) }
 
   cpu := lib.emulate(instructions, proc (cpu: ^Cpu) {
     cpu.registers.sp = 0x017E
@@ -103,7 +101,7 @@ shouldSubAndUnderflowToNextBit :: proc(t: ^testing.T) {
 shouldSubAndUnderflow :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, negate(0x01) }
+  instructions := []byte{ lib.ADD_SP_i8, negate(0x01) }
 
   cpu := lib.emulate(instructions, proc (cpu: ^Cpu) {
     cpu.registers.sp = 0x0000
@@ -123,7 +121,7 @@ shouldSubAndUnderflow :: proc(t: ^testing.T) {
 shouldSubAndSetCarryFlags :: proc(t: ^testing.T) {
   using _cpu
 
-  instructions := []byte{ ADD_SP_i8, 0xFF } // 0xFF is -1 in twos complement
+  instructions := []byte{ lib.ADD_SP_i8, 0xFF } // 0xFF is -1 in twos complement
 
   cpu := lib.emulate(instructions, proc(cpu: ^Cpu) {
     cpu.registers.sp = 0x00FF
@@ -135,4 +133,3 @@ shouldSubAndSetCarryFlags :: proc(t: ^testing.T) {
   testing.expect_value(t, getFlagH(&cpu), true)
   testing.expect_value(t, getFlagC(&cpu), true)
 }
-

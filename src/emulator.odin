@@ -12,10 +12,10 @@ emulate :: proc(cpu: ^e_cpu.Cpu) {
   log.debug("Starting emulation...")
 
   for !cpu.done {
-    log.debugf("PC: %#04X", cpu.registers.pc)
     pc := e_cpu.getPC(cpu)
-
+    
     opcode := bus.read(cpu.bus, pc)
+    log.debugf("PC: %#04X, OP: %i", cpu.registers.pc, opcode)
 
     instruction := read[opcode]
     instruction.operation(cpu, instruction)

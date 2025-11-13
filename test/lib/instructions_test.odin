@@ -1,0 +1,17 @@
+package test_lib
+
+JP_u16 :: 0xC3
+JP_NZ_u16 :: 0xC2
+JP_NC_u16 :: 0xD2
+JP_Z_u16 :: 0xCA
+JP_C_u16 :: 0xDA
+JP_HL :: 0xE9
+
+LD_BC_u16 :: 0x01
+LD_HL_u16 :: 0x21
+
+ADD_A_A :: 0x87
+ADD_SP_i8 :: 0xE8
+
+NOOP :: 0x00
+HALT :: 0x76

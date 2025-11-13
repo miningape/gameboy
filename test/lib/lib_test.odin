@@ -6,8 +6,6 @@ import _bus "../../src/bus"
 import _cpu "../../src/cpu"
 import _emulator "../../src"
 
-HALT :: 0x76
-
 createRom :: proc(instructions: []byte) -> []byte {
   header := make([]byte, 0x100 + 1 + len(instructions))
   
@@ -20,8 +18,10 @@ createRom :: proc(instructions: []byte) -> []byte {
   return header
 }
 
-emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu)) -> _cpu.Cpu {
+emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu) = proc(cpu: ^_cpu.Cpu) {}) -> _cpu.Cpu {
   rom := createRom(instructions)
+  log.debug("Created ROM:", rom)
+
   bus := _bus.createBus(rom)
   cpu := _cpu.createCpu(&bus)
   defer _cpu.cleanup(&cpu)
