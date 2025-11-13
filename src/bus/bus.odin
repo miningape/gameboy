@@ -3,7 +3,6 @@ package bus
 import "core:log"
 
 // Will need to fill out more later 
-// Memory map: 
 // Memory Bank Controllers (MBC): https://gbdev.io/pandocs/MBCs.html
 
 // Memory map: https://gbdev.io/pandocs/Memory_Map.html
@@ -21,15 +20,15 @@ import "core:log"
 // 0x0000 - ROM, Cartridge bank 0
 
 Bus :: struct {
-  rom: ^[]byte,
-  ram: []byte
+  rom: []byte,
+  ram: ^[0x2000]byte
 }
 
-createBus :: proc(rom: ^[]byte) -> Bus {
+createBus :: proc(rom: []byte) -> Bus {
   log.debug("Creating bus...")
   return Bus {
     rom, // Maybe bus should read rom?
-    make([]byte, 0x2000) // 8 KiB work ram
+    {}, // 8 KiB work ram
   }
 }
 
@@ -76,4 +75,9 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
 
   log.debug("Pointer to (inc): 0x%04X", location)
   panic("Tried to access an unmapped area of memory")
+}
+
+cleanupBus :: proc(bus: ^Bus) {
+  delete(bus.rom)
+  free(bus.ram)
 }

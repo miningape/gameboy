@@ -1,6 +1,6 @@
 package instructions
 
-import "core:fmt"
+import "core:log"
 
 import "../"
 import op "../operands"
@@ -40,7 +40,7 @@ F_0 :: proc(value: bool) -> bool {
 }
 
 HALT :: proc(c: ^cpu.Cpu, i: Instruction) {
-  fmt.printfln("Halted")
+  log.debug("Halted")
   c.done = true
 }
 

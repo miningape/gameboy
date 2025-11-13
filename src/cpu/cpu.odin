@@ -67,6 +67,5 @@ sprint :: proc(cpu: ^Cpu) -> string {
 
 // Cleans up any references / memory the CPU owns
 cleanup :: proc(cpu: ^Cpu) {
-  delete(cpu.bus.ram)
-  delete(cpu.bus.rom^)
+  bus.cleanupBus(cpu.bus)
 }

@@ -19,7 +19,7 @@ main :: proc () {
   fmt.println()
 
   rom, _ := readCartridge(os.args[1])
-  bus := createBus(&rom)
+  bus := createBus(rom)
   cpu := createCpu(&bus)
   defer cleanup(&cpu)
 

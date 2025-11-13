@@ -22,7 +22,7 @@ createRom :: proc(instructions: []byte) -> []byte {
 
 emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu)) -> _cpu.Cpu {
   rom := createRom(instructions)
-  bus := _bus.createBus(&rom)
+  bus := _bus.createBus(rom)
   cpu := _cpu.createCpu(&bus)
   defer _cpu.cleanup(&cpu)
 
