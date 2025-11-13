@@ -21,25 +21,23 @@ Instruction :: struct {
 }
 
 nextByte :: proc(c: ^cpu.Cpu) -> op.Operand {
+  value := bus.read(c.bus, c.registers.pc)
   cpu.incrementPC(c)
-  return bus.read(c.bus, c.registers.pc)
+
+  return value
 }
 
 next2Bytes :: proc(c: ^cpu.Cpu) -> op.Operand {
-  lower := bus.read(c.bus, c.registers.pc + 1)
-  upper := bus.read(c.bus, c.registers.pc + 2)
-  
+  lower := bus.read(c.bus, c.registers.pc)
   cpu.incrementPC(c)
-  cpu.incrementPC(c)
+  upper := bus.read(c.bus, c.registers.pc)
 
   return  u16(lower) | u16(upper) << 8
 }
 
-F_0 :: proc(value: bool) -> bool {
-  return false
-}
-
 HALT :: proc(c: ^cpu.Cpu, i: Instruction) {
+  cpu.incrementPC(c)
+
   log.debug("Halted")
   c.done = true
 }
@@ -64,7 +62,7 @@ MAPPING :: proc() -> [0x100]Instruction {
     /* 9 */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* A */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* B */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
-    /* C */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               {ADD, op.A, nextByte, F_ALL},    NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
+    /* C */ NOOP,                        NOOP,                          NOOP,                         {JP, next2Bytes, nil, F_NO},  NOOP,                               NOOP,                               {ADD, op.A, nextByte, F_ALL},    NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* D */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* E */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        {ADD, op.SP, nextByte, F_ALL}, NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 
     /* F */ NOOP,                        NOOP,                          NOOP,                         NOOP,                         NOOP,                               NOOP,                               NOOP,                            NOOP,                        NOOP,                          NOOP,                   NOOP,                         NOOP,                    NOOP,                    NOOP,                    NOOP,                        NOOP, 

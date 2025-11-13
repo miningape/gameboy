@@ -52,6 +52,8 @@ INC_register :: proc(register: operands.Register) -> (bool, u8) {
 }
 
 INC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  cpu.incrementPC(c)
+  
   value: u8
   isU8Operation: bool
 

@@ -4,6 +4,8 @@ import "../"
 import op "../operands"
 
 LD :: proc(c: ^cpu.Cpu, i: Instruction) {
+  cpu.incrementPC(c)
+
   data := i.right(c)
 
   switch left in i.left(c) {
@@ -24,6 +26,8 @@ LD :: proc(c: ^cpu.Cpu, i: Instruction) {
 }
 
 LDI :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  cpu.incrementPC(c)
+
   switch left in instruction.left(c) {
     case op.Register:
       pointer := instruction.right(c).(op.Pointer)
@@ -45,6 +49,8 @@ LDI :: proc(c: ^cpu.Cpu, instruction: Instruction) {
 }
 
 LDD :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  cpu.incrementPC(c)
+  
   switch left in instruction.left(c) {
     case op.Register:
       pointer := instruction.right(c).(op.Pointer)

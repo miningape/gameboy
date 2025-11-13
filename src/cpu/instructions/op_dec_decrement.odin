@@ -26,6 +26,8 @@ DEC_register :: proc(register: op.Register) -> (bool, u8) {
 }
 
 DEC :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  cpu.incrementPC(c)
+  
   result: u8
   isU8Operation: bool
   
