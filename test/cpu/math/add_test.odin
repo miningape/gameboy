@@ -1,4 +1,4 @@
-package cpu_add_test
+package cpu_math_test
 
 import "core:testing"
 

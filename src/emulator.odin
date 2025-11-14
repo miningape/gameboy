@@ -15,7 +15,7 @@ emulate :: proc(cpu: ^e_cpu.Cpu) {
     pc := e_cpu.getPC(cpu)
     
     opcode := bus.read(cpu.bus, pc)
-    log.debugf("PC: %#04X, OP: %i", cpu.registers.pc, opcode)
+    log.debugf("PC: %#04X, OP: %#02X", cpu.registers.pc, opcode)
 
     instruction := read[opcode]
     instruction.operation(cpu, instruction)
