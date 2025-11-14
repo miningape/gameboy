@@ -32,14 +32,14 @@ shouldXorAu8 :: proc(t: ^testing.T) {
   testing.expect_value(t, cpu.registers.a, 0b0011_1100)
 }
 
-// @(test)
-// shouldXorAHL_ptr :: proc(t: ^testing.T) {
-//   cpu := lib.emulate({ lib.XOR_A_HL_ptr }, proc(cpu: ^_cpu.Cpu) {
-//     cpu.bus.ram[0]  = 0b1000_1000
-//     cpu.registers.a = 0b1001_1001
-//     cpu.registers.h = 0xC0
-//     cpu.registers.l = 0x00
-//   })
+@(test)
+shouldXorAHL_ptr :: proc(t: ^testing.T) {
+  cpu := lib.emulate({ lib.XOR_A_HL_ptr }, proc(cpu: ^_cpu.Cpu) {
+    cpu.bus.ram[0]  = 0b1000_1000
+    cpu.registers.a = 0b1001_1001
+    cpu.registers.h = 0xC0
+    cpu.registers.l = 0x00
+  })
 
-//   testing.expect_value(t, cpu.registers.a, 0b0001_0001)
-// }
+  testing.expect_value(t, cpu.registers.a, 0b0001_0001)
+}

@@ -21,14 +21,14 @@ import "core:log"
 
 Bus :: struct {
   rom: []byte,
-  ram: ^[0x2000]byte
+  ram: []byte
 }
 
 createBus :: proc(rom: []byte) -> Bus {
   log.debug("Creating bus...")
   return Bus {
     rom, // Maybe bus should read rom?
-    {}, // 8 KiB work ram
+    make([]byte, 0x2000), // 8 KiB work ram
   }
 }
 
@@ -79,5 +79,5 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
 
 cleanupBus :: proc(bus: ^Bus) {
   delete(bus.rom)
-  free(bus.ram)
+  delete(bus.ram)
 }

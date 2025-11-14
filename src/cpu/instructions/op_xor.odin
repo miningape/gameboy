@@ -13,8 +13,6 @@ XOR :: proc(cpu: ^_cpu.Cpu, instruction: Instruction) {
   operand := instruction.left(cpu)
   mask := op.operandIsU8(operand)
 
-  log.debug(mask, cpu.registers.a)
-
   cpu.registers.a ~= mask
 
   _cpu.setFlagZ(cpu, cpu.registers.a == 0)
