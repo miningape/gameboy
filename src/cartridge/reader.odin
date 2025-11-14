@@ -1,5 +1,6 @@
 package cartridge
 
+import "core:log"
 import "core:os"
 import "core:fmt"
 
@@ -14,12 +15,13 @@ assertRomSize :: proc(handle: os.Handle, stated: i64) -> (i64, os.Error) {
   return actual, nil
 }
 
-readCartridge :: proc(filepath: string) -> ([]byte, os.Error) {
+readCartridge :: proc(filepath: string) -> []byte {
   fmt.println("Reading cartridge...")
 
   handle, openErr := os.open(filepath)
   if openErr != nil {
-    return nil, openErr
+    log.error(openErr)
+    panic("Error while opening a file")
   }
   defer os.close(handle)
 
@@ -27,7 +29,8 @@ readCartridge :: proc(filepath: string) -> ([]byte, os.Error) {
 
   size, error := assertRomSize(handle, i64(header.sizeKiB * 1024))
   if error != nil {
-    return nil, error
+    log.error(error)
+    panic("Error while reading ROM size")
   }
 
   fmt.println()
@@ -39,8 +42,9 @@ readCartridge :: proc(filepath: string) -> ([]byte, os.Error) {
   buf := make([]byte, size)
   _, error = os.read(handle, buf)
   if error != nil {
-    return nil, error
+    log.error(error)
+    panic("Error reading file")
   }
 
-  return buf, nil
+  return buf
 }
