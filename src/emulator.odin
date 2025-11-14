@@ -6,20 +6,9 @@ import "core:log"
 import e_cpu "cpu"
 import "bus"
 import "cpu/instructions"
+import _debugger "util/debugger"
 
-readUntilNewline :: proc() -> string {
-  buffer := make([]byte, 0xFF)
-
-  n, err := os.read(os.stdin, buffer)
-  if err != nil {
-    log.error(err)
-    panic("Error reading from stdin")
-  }
-
-  return string(buffer[:n])
-}
-
-emulate :: proc(cpu: ^e_cpu.Cpu, debug: bool) {
+emulate :: proc(cpu: ^e_cpu.Cpu, debugger: ^_debugger.T) {
   read := instructions.MAPPING()
   
   log.debug("Starting emulation...")
@@ -27,9 +16,8 @@ emulate :: proc(cpu: ^e_cpu.Cpu, debug: bool) {
   for !cpu.done {
     pc := e_cpu.getPC(cpu)
 
-    if debug {
-      s := readUntilNewline()
-      log.debug(s)
+    if debugger != nil {
+      _debugger.debugStep(debugger)
     }
     
     opcode := bus.read(cpu.bus, pc)

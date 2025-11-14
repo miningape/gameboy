@@ -27,7 +27,7 @@ emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu) = proc(cpu: ^_cpu
   defer _cpu.cleanup(&cpu)
 
   hook(&cpu)
-  _emulator.emulate(&cpu, false)
+  _emulator.emulate(&cpu, nil)
 
   return cpu
 }

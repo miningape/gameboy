@@ -9,6 +9,7 @@ import "bus"
 import SDL "vendor:sdl2"
 
 import "./util/cli"
+import "./util/debugger"
 
 main :: proc () {
   using cartridge
@@ -21,10 +22,12 @@ main :: proc () {
   fmt.println()
 
   flags := cli.getFlags()
-  rom := readCartridge(os.args[1])
+  rom := readCartridge(flags.file)
   bus := createBus(rom)
   cpu := createCpu(&bus)
   defer cleanup(&cpu)
 
-  emulate(&cpu, flags.debug)
+  debugger := debugger.create(&cpu)
+
+  emulate(&cpu, flags.debug ? &debugger : nil)
 }

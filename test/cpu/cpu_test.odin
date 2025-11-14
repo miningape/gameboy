@@ -18,7 +18,7 @@ shouldLoad :: proc (t: ^testing.T) {
   cpu := _cpu.createCpu(&bus)
   defer _cpu.cleanup(&cpu)
 
-  _emulator.emulate(&cpu, false)
+  _emulator.emulate(&cpu, nil)
 
   testing.expect_value(t, cpu.registers.b, 0x69)
   testing.expect_value(t, cpu.registers.c, 0x69)
