@@ -43,7 +43,7 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
       return bus.ram[location - 0xC000]
   }
 
-  log.debug("Reading memory: 0x%04X", location)
+  log.debugf("Reading memory: 0x%04X", location)
   panic("Tried to access an unmapped area of memory")
 }
 
@@ -58,7 +58,7 @@ write :: proc(bus: ^Bus, location: u16, data: byte) {
       bus.ram[location - 0xC000] = data
   }
 
-  log.debug("Writing memory: 0x%04X - data: 0x%02X", location, data)
+  log.debugf("Writing memory: 0x%04X - data: 0x%02X", location, data)
   panic("Tried to access an unmapped area of memory")
 }
 
@@ -73,7 +73,7 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
       return &bus.ram[location - 0xC000]
   }
 
-  log.debug("Pointer to (inc): 0x%04X", location)
+  log.debugf("Pointer to (inc): 0x%04X", location)
   panic("Tried to access an unmapped area of memory")
 }
 
