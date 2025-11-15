@@ -56,7 +56,9 @@ jumpRelative :: proc(c: ^cpu.Cpu, relativeIndex: u8) {
 }
 
 JR :: proc(c: ^cpu.Cpu, instruction: Instruction) {
-  instructionAddress := c.registers.pc
+  // Jump relative is from the next instruction - since previous instructions are "consumed"
+  // https://www.reddit.com/r/EmuDev/comments/jmo5x1/gameboy_0x20_instruction/
+  
   cpu.incrementPC(c)
 
   switch left in instruction.left(c) {
@@ -64,13 +66,12 @@ JR :: proc(c: ^cpu.Cpu, instruction: Instruction) {
       switch literal in left {
         case u8: // JR s8
           log.debug("Jump relative by", literal)
-          c.registers.pc = instructionAddress
           jumpRelative(c, literal)
 
         case bool: // JR C|NC|Z|NC i8
           if literal {
             relativeIndex := instruction.right(c).(op.Literal).(u8)
-            c.registers.pc = instructionAddress
+            log.debug("Jump relative by", relativeIndex)
             jumpRelative(c, relativeIndex)
           } else {
             // Go to the next instruction
