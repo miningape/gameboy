@@ -16,7 +16,7 @@ assertRomSize :: proc(handle: os.Handle, stated: i64) -> (i64, os.Error) {
 }
 
 readCartridge :: proc(filepath: string) -> []byte {
-  fmt.println("Reading cartridge...")
+  log.debug("Reading cartridge...")
 
   handle, openErr := os.open(filepath)
   if openErr != nil {
@@ -33,11 +33,8 @@ readCartridge :: proc(filepath: string) -> []byte {
     panic("Error while reading ROM size")
   }
 
-  fmt.println()
-  fmt.println(header)
-  fmt.print("This rom is ")
-  fmt.println(isRomValid(header) ? "uncorrupted" : "corrupted")
-  fmt.println()
+  log.debug("Successfully read header\n", header)
+  log.debug("This rom is ", isRomValid(header) ? "uncorrupted" : "corrupted")
 
   buf := make([]byte, size)
   _, error = os.read(handle, buf)

@@ -19,8 +19,6 @@ main :: proc () {
   logger := log.create_console_logger()
   context.logger = logger
 
-  fmt.println()
-
   flags := cli.getFlags()
   rom := readCartridge(flags.file)
   bus := createBus(rom)
