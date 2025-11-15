@@ -1,3 +1,7 @@
 roms/*
 src.bin
 test.bin
+emulator
+
+resources/*
+!resources/readme.md

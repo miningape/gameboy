@@ -16,10 +16,11 @@ main :: proc () {
   using cpu
   using bus
 
-  logger := log.create_console_logger()
+  flags := cli.getFlags()
+
+  logger := log.create_console_logger(flags.debug ? .Debug : .Warning)
   context.logger = logger
 
-  flags := cli.getFlags()
   rom := readCartridge(flags.file)
   bus := createBus(rom)
   cpu := createCpu(&bus)
