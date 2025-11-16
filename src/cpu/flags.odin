@@ -2,7 +2,9 @@ package cpu
 
 import "core:fmt"
 import "core:strings"
+
 // CPU Registers and Flags: https://gbdev.io/pandocs/CPU_Registers_and_Flags.html
+// TODO: Refactor to use enum
 
 @(private)
 setFlag :: proc(c: ^Cpu, value: bool, flagMask: byte) {
@@ -40,6 +42,10 @@ setFlagC :: proc(c: ^Cpu, value: bool) {
 
 getFlagC :: proc(c: ^Cpu) -> bool {
   return getFlag(c, cFlagMask)
+}
+
+toggleFlagC :: proc(c: ^Cpu) {
+  c.registers.f ~= cFlagMask
 }
 
 // The BCD flags (N, H) - used by the DAA instruction only

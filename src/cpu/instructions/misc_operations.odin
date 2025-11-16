@@ -13,3 +13,14 @@ SCF :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   cpu.setFlagH(c, false)
   cpu.setFlagC(c, true)
 }
+
+// Complement (toggle) Carry Flag
+CCF :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  cpu.incrementPC(c)
+
+  // Doesn't affect Z flag
+  cpu.setFlagN(c, false)
+  cpu.setFlagH(c, false)
+
+  cpu.toggleFlagC(c)
+}
