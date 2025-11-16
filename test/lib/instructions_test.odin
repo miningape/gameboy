@@ -24,6 +24,8 @@ SUB_A_B :: 0x90
 SUB_A_u8 :: 0xD6
 SUB_A_HL_ptr :: 0x96
 
+CP_A_B :: 0xB8
+
 AND_A_B :: 0xA0
 AND_A_A :: 0xA7
 AND_A_HL_ptr :: 0xA6

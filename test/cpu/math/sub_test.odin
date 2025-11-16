@@ -22,6 +22,23 @@ shouldSub :: proc(t: ^testing.T) {
 }
 
 @(test)
+shouldCompare :: proc(t: ^testing.T) {
+  // CP is the same as SUB, except we don't store the result in the A register
+  using _cpu
+
+  cpu := lib.emulate({lib.CP_A_B}, proc(cpu: ^_cpu.Cpu) {
+    cpu.registers.a = 0xFF
+    cpu.registers.b = 0xFF
+  })
+
+  testing.expect_value(t, cpu.registers.a, 0xFF)
+  testing.expect_value(t, getFlagZ(&cpu), true)
+  testing.expect_value(t, getFlagN(&cpu), true)
+  testing.expect_value(t, getFlagH(&cpu), false)
+  testing.expect_value(t, getFlagC(&cpu), false)
+}
+
+@(test)
 shouldSubSelf :: proc(t: ^testing.T) {
   using _cpu
 
