@@ -1,4 +1,4 @@
-Resources will be downloaded into this directory when running `make debug`
+Resources will be downloaded into this directory when running `make`
 
 Resources:
 

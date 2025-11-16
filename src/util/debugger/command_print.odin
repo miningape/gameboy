@@ -14,7 +14,9 @@ print :: proc(debugger: ^T, args: []string) -> bool {
   target := args[1]
 
   switch target {
-    case "reg":
+    case "regs":
+      fallthrough
+    case "registers":
       log.info("Registers:", cpu.sprint(debugger.cpu), sep="\n")
 
     case "flags":
