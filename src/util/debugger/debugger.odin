@@ -29,6 +29,9 @@ create :: proc(cpu: ^_cpu.Cpu) -> T {
       "set" = set,
       "help" = help,
       "continue" = continueToNextBreakpoint,
+      "regs" = proc(debugger: ^T, args: []string) -> bool {
+        return print(debugger, {"print", "regs"})
+      },
       "exit" = proc(debugger: ^T, args: []string) -> bool {
         os.exit(0)
       }
