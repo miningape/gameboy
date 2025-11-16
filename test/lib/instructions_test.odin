@@ -29,6 +29,11 @@ AND_A_A :: 0xA7
 AND_A_HL_ptr :: 0xA6
 AND_A_u8 :: 0xE6
 
+OR_A_B :: 0xB0
+OR_A_A :: 0xB7
+OR_A_HL_ptr :: 0xB6
+OR_A_u8 :: 0xF6
+
 XOR_A_B :: 0xA8
 XOR_A_A :: 0xAF
 XOR_A_u8 :: 0xEE
