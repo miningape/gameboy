@@ -24,6 +24,11 @@ SUB_A_B :: 0x90
 SUB_A_u8 :: 0xD6
 SUB_A_HL_ptr :: 0x96
 
+AND_A_B :: 0xA0
+AND_A_A :: 0xA7
+AND_A_HL_ptr :: 0xA6
+AND_A_u8 :: 0xE6
+
 XOR_A_B :: 0xA8
 XOR_A_A :: 0xAF
 XOR_A_u8 :: 0xEE

@@ -67,7 +67,7 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
   switch location {
     // ROM cartridge, including 1 switch bank (i.e. no switching)
     case 0x0000..<0x8000:
-      panic("Cannot write to ROM cartridge")
+      return &bus.rom[location]
 
     // Work RAM
     case 0xC000..<0xE000:

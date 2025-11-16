@@ -19,5 +19,5 @@ dropSignBit :: proc(t: ^testing.T) {
 
   dropped := isNegative ? u16(~value + 1) : u16(value)
 
-  log.infof("negative = %t, %#04X = %i -> %i, sign removed: %#04X = %i -> %i", isNegative, value, value, i8(value), dropped, dropped, dropped)
+  log.debugf("negative = %t, %#04X = %i -> %i, sign removed: %#04X = %i -> %i", isNegative, value, value, i8(value), dropped, dropped, dropped)
 }
