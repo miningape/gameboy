@@ -6,10 +6,10 @@ resources/opcodes.json:
 
 resources: resources/opcodes.json
 
-test-all:
+test-all: FORCE
 	odin test test/ --all-packages 
 
-test-only:
+test-only: FORCE
 	odin test test/ --all-packages -define:ODIN_TEST_LOG_LEVEL=debug -define:ODIN_TEST_NAMES=$(test)
 
 FORCE:

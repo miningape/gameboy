@@ -1,8 +1,6 @@
 package instructions
 
-import "core:log"
 import "core:flags"
-import "core:fmt"
 
 import "../"
 import "../operands"
@@ -37,7 +35,7 @@ setFlagC :: proc (c_: ^cpu.Cpu, flags: Flags, c: bool) {
 
 ADD :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   cpu.incrementPC(c)
-  
+
   reg := instruction.left(c).(operands.Register)
   data := instruction.right(c)
 

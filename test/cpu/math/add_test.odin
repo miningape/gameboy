@@ -62,7 +62,7 @@ shouldAddAndOverflow :: proc(t: ^testing.T) {
 }
 
 @(test)
-shouldSub :: proc(t: ^testing.T) {
+shouldSubWhenNegative :: proc(t: ^testing.T) {
   using _cpu
 
   instructions := []byte{ lib.ADD_SP_i8, negate(0x7F)}

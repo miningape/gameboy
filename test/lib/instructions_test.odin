@@ -19,6 +19,11 @@ LD_HL_u16 :: 0x21
 ADD_A_A :: 0x87
 ADD_SP_i8 :: 0xE8
 
+SUB_A_A :: 0x97
+SUB_A_B :: 0x90
+SUB_A_u8 :: 0xD6
+SUB_A_HL_ptr :: 0x96
+
 XOR_A_B :: 0xA8
 XOR_A_A :: 0xAF
 XOR_A_u8 :: 0xEE
