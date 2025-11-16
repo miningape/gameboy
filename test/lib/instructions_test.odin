@@ -41,5 +41,8 @@ XOR_A_A :: 0xAF
 XOR_A_u8 :: 0xEE
 XOR_A_HL_ptr :: 0xAE
 
+// Misc.
 NOOP :: 0x00
 HALT :: 0x76
+
+SCF :: 0x37

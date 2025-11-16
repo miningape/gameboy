@@ -9,6 +9,7 @@ import "../lib"
 
 @require import "./math"
 @require import "./jump"
+@require import "./misc"
 
 @(test)
 shouldLoad :: proc (t: ^testing.T) {
