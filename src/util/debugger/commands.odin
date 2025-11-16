@@ -48,6 +48,9 @@ Commands -
   - disassemble - Print the current and next several operations in human readable text
   - rm|unset    - Unset a variable
     - breakpoint - Remove a set breakpoint so it will not break execution anymore
+  - print
+    Targets:
+      - memory u16 .. u16 - prints memory at specified address range
 `
 
 @(private)

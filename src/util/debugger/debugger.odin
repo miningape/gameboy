@@ -2,8 +2,6 @@
 
 package debugger
 
-import "core:strconv"
-import "core:slice"
 import "core:os"
 import "core:fmt"
 import "core:log"

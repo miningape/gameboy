@@ -18,13 +18,13 @@ emulate :: proc(cpu: ^e_cpu.Cpu, debugger: ^_debugger.T) {
     pc := e_cpu.getPC(cpu)
     opcode := bus.read(cpu.bus, pc)
     
-    log.debugf("Executing: PC: %#04X, OP: %#02X", cpu.registers.pc, opcode)
-
     if debugger != nil {
       description := resources.describe(opcode, cpu)
-      log.debugf("Operation: %s", description)
+      log.debugf("$%04X = %#02X =>\t%s", cpu.registers.pc, opcode, description)
 
       _debugger.debugStep(debugger)
+    } else {
+      log.debugf("Executing: PC: %#04X, OP: %#02X", cpu.registers.pc, opcode)
     }
 
     instruction := read[opcode]

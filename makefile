@@ -1,4 +1,4 @@
-emulator: resources
+emulator: resources FORCE
 	odin build src -out:emulator
 
 resources/opcodes.json:
@@ -11,3 +11,5 @@ test-all:
 
 test-only:
 	odin test test/ --all-packages -define:ODIN_TEST_LOG_LEVEL=debug -define:ODIN_TEST_NAMES=$(test)
+
+FORCE:

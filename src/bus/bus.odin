@@ -43,7 +43,7 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
       return bus.ram[location - 0xC000]
   }
 
-  log.debugf("Reading memory: 0x%04X", location)
+  log.errorf("Reading memory: 0x%04X", location)
   panic("Tried to access an unmapped area of memory")
 }
 
@@ -56,9 +56,10 @@ write :: proc(bus: ^Bus, location: u16, data: byte) {
     // Work RAM
     case 0xC000..<0xE000:
       bus.ram[location - 0xC000] = data
+      return
   }
 
-  log.debugf("Writing memory: 0x%04X - data: 0x%02X", location, data)
+  log.errorf("Writing memory: 0x%04X - data: 0x%02X", location, data)
   panic("Tried to access an unmapped area of memory")
 }
 
