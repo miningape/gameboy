@@ -20,7 +20,7 @@ emulate :: proc(cpu: ^e_cpu.Cpu, debugger: ^_debugger.T) {
     
     if debugger != nil {
       description := resources.describe(opcode, cpu)
-      log.debugf("$%04X = %#02X =>\t%s", cpu.registers.pc, opcode, description)
+      log.debugf("$%04X = %#02X %s", cpu.registers.pc, opcode, description)
 
       _debugger.debugStep(debugger)
     } else {

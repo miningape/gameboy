@@ -35,14 +35,15 @@ Opcode :: struct {
 
 @(private)
 Opcodes :: struct {
-  unprefixed: map[string]Opcode
-  // cbprefixed: map[string]Opcode
+  unprefixed: map[string]Opcode,
+  cbprefixed: map[string]Opcode
 }
 
 opcodes: Opcodes
 
-describe :: proc(opcode: byte, c: ^cpu.Cpu) -> string {
-  if opcodes.unprefixed == nil {
+@(private)
+lazyLoadOpcodeDescriptions :: proc () {
+  if opcodes.unprefixed == nil || opcodes.cbprefixed == nil {
     bytes, success := os.read_entire_file("./resources/opcodes.json")
     if !success {
       panic("Error while reading opcodes.json")
@@ -54,14 +55,30 @@ describe :: proc(opcode: byte, c: ^cpu.Cpu) -> string {
       panic("Error while unmarshalling opcodes.json")
     }
   }
+}
+
+describe :: proc(opcode: byte, c: ^cpu.Cpu) -> string {
+  lazyLoadOpcodeDescriptions()
   
+  pc := c.registers.pc
   key := toKey(opcode)
-  operation :=  opcodes.unprefixed[key]
+  operation := opcodes.unprefixed[key]
 
   sb := strings.builder_make()
-  fmt.sbprint(&sb, operation.mnemonic, "")
 
-  pc := c.registers.pc
+  if opcode == 0xCB {
+    // 0xCB = PREFIX so we advance, and read from CB prefixed opcodes
+    pc += 1
+
+    unPrefixedOpcode := bus.read(c.bus, pc)
+    key := toKey(unPrefixedOpcode)
+    operation = opcodes.cbprefixed[key]
+
+    fmt.sbprintf(&sb, "%#02X ", unPrefixedOpcode)
+    operation.mnemonic = strings.concatenate({"PREFIX ", operation.mnemonic})
+  }
+
+  fmt.sbprint(&sb, "=>", operation.mnemonic, "")
 
   for operand in operation.operands {
     switch operand.bytes {
