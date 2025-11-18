@@ -1,11 +1,11 @@
 package test_lib
 
+import "base:runtime"
 import "core:log"
 
 import _bus "../../src/bus"
 import _cpu "../../src/cpu"
 import _emulator "../../src"
-import _debugger "../../src/util/debugger"
 
 createRom :: proc(instructions: []byte) -> []byte {
   header := make([]byte, 0x100 + 1 + len(instructions))
@@ -19,7 +19,9 @@ createRom :: proc(instructions: []byte) -> []byte {
   return header
 }
 
-emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu) = proc(cpu: ^_cpu.Cpu) {}, debugger: ^_debugger.T = nil) -> _cpu.Cpu {
+emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu) = proc(cpu: ^_cpu.Cpu) {}, allocator: runtime.Allocator = context.allocator) -> _cpu.Cpu {
+  context.allocator = allocator
+
   rom := createRom(instructions)
   log.debug("Created ROM:", rom)
 
@@ -28,7 +30,7 @@ emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu) = proc(cpu: ^_cpu
   defer _cpu.cleanup(&cpu)
 
   hook(&cpu)
-  _emulator.emulate(&cpu, debugger)
+  _emulator.emulate(&cpu, nil)
 
   return cpu
 }

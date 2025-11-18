@@ -30,7 +30,7 @@ createBus :: proc(rom: []byte) -> Bus {
   return Bus {
     rom, // Maybe bus should read rom?
     make([]byte, 0x2000), // 8 KiB work ram (ram / wram)
-    make([]byte, 0x100), // 255 (ff) bytes high ram (hram) + IE register
+    make([]byte, 0x0100), // 255 (ff) bytes high ram (hram) + IE register
   }
 }
 
@@ -96,4 +96,5 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
 cleanupBus :: proc(bus: ^Bus) {
   delete(bus.rom)
   delete(bus.ram)
+  delete(bus.hram)
 }

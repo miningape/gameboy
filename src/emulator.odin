@@ -28,6 +28,6 @@ emulate :: proc(cpu: ^e_cpu.Cpu, debugger: ^_debugger.T) {
     }
 
     instruction := read[opcode]
-    instruction.operation(cpu, instruction)    
+    instruction.operation(cpu, instruction)
   }
 }

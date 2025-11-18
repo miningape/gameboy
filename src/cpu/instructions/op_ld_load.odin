@@ -33,6 +33,21 @@ LD :: proc(c: ^cpu.Cpu, i: Instruction) {
   // LD never affects flags
 }
 
+/*
+   Only used for 0x08 - LD [u16] SP
+
+   Loads 2 bytes in RAM with one instruction
+ */
+LD_2_bytes :: proc(c: ^cpu.Cpu, i: Instruction) {
+  cpu.incrementPC(c)
+
+  address := i.left(c).(op.Literal).(u16) // We don't get a pointer since pointer arithmetic isn't great in Odin
+  upper, lower := cpu.split(i.right(c).(op.Register).(^cpu.Register16)^)
+  
+  bus.write(c.bus, address, lower)
+  bus.write(c.bus, address + 1, upper)
+}
+
 LDI :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   // Only valid combinations are
   // LD [HL+] A
