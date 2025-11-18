@@ -21,14 +21,16 @@ import "core:log"
 
 Bus :: struct {
   rom: []byte,
-  ram: []byte
+  ram: []byte,
+  hram: []byte // Includes IE register
 }
 
 createBus :: proc(rom: []byte) -> Bus {
   log.debug("Creating bus...")
   return Bus {
     rom, // Maybe bus should read rom?
-    make([]byte, 0x2000), // 8 KiB work ram
+    make([]byte, 0x2000), // 8 KiB work ram (ram / wram)
+    make([]byte, 0x100), // 255 (ff) bytes high ram (hram) + IE register
   }
 }
 
@@ -41,6 +43,10 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
     // Work RAM
     case 0xC000..<0xE000:
       return bus.ram[location - 0xC000]
+
+    // High RAM
+    case 0xFF00..=0xFFFF:
+      return bus.hram[location - 0xFF00]
   }
 
   log.errorf("Reading memory: 0x%04X", location)
@@ -57,6 +63,11 @@ write :: proc(bus: ^Bus, location: u16, data: byte) {
     case 0xC000..<0xE000:
       bus.ram[location - 0xC000] = data
       return
+
+    // High RAM
+    case 0xFF00..=0xFFFF:
+      bus.hram[location - 0xFF00] = data
+      return
   }
 
   log.errorf("Writing memory: 0x%04X - data: 0x%02X", location, data)
@@ -72,6 +83,10 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
     // Work RAM
     case 0xC000..<0xE000:
       return &bus.ram[location - 0xC000]
+
+    // High RAM
+    case 0xFF00..=0xFFFF:
+      return &bus.hram[location - 0xFF00]
   }
 
   log.debugf("Pointer to (inc): 0x%04X", location)

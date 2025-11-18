@@ -7,9 +7,10 @@ import op "../operands"
 LD :: proc(c: ^cpu.Cpu, i: Instruction) {
   cpu.incrementPC(c)
 
+  operand := i.left(c)
   data := i.right(c)
 
-  switch left in i.left(c) {
+  switch left in operand {
     case op.Pointer:
       left^ = op.operandIsU8(data)
 

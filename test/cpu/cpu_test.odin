@@ -9,6 +9,7 @@ import "../lib"
 
 @require import "./math"
 @require import "./jump"
+@require import "./load"
 @require import "./misc"
 
 @(test)

@@ -1,18 +1,17 @@
 package operands
 
 import "../"
-
-// @(private = "file")
-// intoC_ :: proc(c: ^cpu.Cpu, operand: Operand) {
-//   data := operandIsU8(operand)
-//   c.registers.c = data
-// }
-
-// intoC :: proc(c: ^cpu.Cpu) -> Operand {
-//   return intoC_
-// }
+import "../../bus"
 
 C :: proc(c: ^cpu.Cpu) -> Operand {
   register: Register = &c.registers.c
   return register
+}
+
+// Used in LDH (load into high RAM)
+HRAM_OFFSET :: 0xFF00
+C_hram_ptr :: proc(c: ^cpu.Cpu) -> Operand {
+  address := c.registers.c
+
+  return Pointer(bus.pointer(c.bus, HRAM_OFFSET + u16(address)))
 }
