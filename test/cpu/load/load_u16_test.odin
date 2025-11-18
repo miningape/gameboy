@@ -1,12 +1,10 @@
 package cpu_load_test
 
-import "core:log"
 import "core:testing"
 
 import "../../lib"
 import "../../../src/bus"
 import _cpu "../../../src/cpu"
-import emulator "../../../src"
 
 @(test)
 shouldLoadIntoU16Ptr :: proc(t: ^testing.T) {
@@ -44,4 +42,17 @@ shouldLoadSPIntoU16Ptr :: proc(t: ^testing.T) {
 
   testing.expect_value(t, bus.read(cpu.bus, 0xFFF0), 0x04)
   testing.expect_value(t, bus.read(cpu.bus, 0xFFF1), 0xFF)
+}
+
+@(test)
+shouldLoadHLIntoSP :: proc(t: ^testing.T) {
+  using _cpu
+  
+  cpu := lib.emulate({lib.LD_SP_HL}, proc(cpu: ^Cpu) {
+    cpu.registers.sp = 0x0000
+    cpu.registers.h = 0xA8
+    cpu.registers.l = 0xBD
+  })
+
+  testing.expect_value(t, cpu.registers.sp, 0xA8BD)
 }

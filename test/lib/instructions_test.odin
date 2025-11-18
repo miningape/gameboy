@@ -16,6 +16,7 @@ JR_C_i8 :: 0x38
 LD_BC_u16 :: 0x01
 LD_HL_u16 :: 0x21
 
+LD_SP_HL :: 0xF9
 LD_u16_ptr_SP :: 0x08
 
 LD_u16_ptr_A :: 0xEA
