@@ -1,33 +1,34 @@
 package main
 
-import "core:os"
 import "core:log"
 
 import e_cpu "cpu"
 import "bus"
 import "cpu/instructions"
-import _debugger "util/debugger"
-import "util/resources"
+import "util/debugger"
 
-emulate :: proc(cpu: ^e_cpu.Cpu, debugger: ^_debugger.T) {
+emulate :: proc(cpu: ^e_cpu.Cpu, debug: ^debugger.T) {
   read := instructions.MAPPING()
   
   log.debug("Starting emulation...")
 
   for !cpu.done {
+    if debug != nil {
+      if !debugger.step(debug) {
+        continue
+      }
+    }
+
     pc := e_cpu.getPC(cpu)
     opcode := bus.read(cpu.bus, pc)
     
-    if debugger != nil {
-      description := resources.describe(opcode, cpu)
-      log.debugf("$%04X = %#02X %s", cpu.registers.pc, opcode, description)
-
-      _debugger.debugStep(debugger)
-    } else {
+    if debug == nil {
       log.debugf("Executing: PC: %#04X, OP: %#02X", cpu.registers.pc, opcode)
     }
 
     instruction := read[opcode]
     instruction.operation(cpu, instruction)
   }
+
+  log.debug("Finished emulation")
 }

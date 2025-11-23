@@ -57,10 +57,11 @@ lazyLoadOpcodeDescriptions :: proc () {
   }
 }
 
-describe :: proc(opcode: byte, c: ^cpu.Cpu) -> string {
+describeCurrentOpcode :: proc(c: ^cpu.Cpu) -> (byte, string) {
   lazyLoadOpcodeDescriptions()
   
   pc := c.registers.pc
+  opcode := c.bus.rom[pc]
   key := toKey(opcode)
   operation := opcodes.unprefixed[key]
 
@@ -107,7 +108,7 @@ describe :: proc(opcode: byte, c: ^cpu.Cpu) -> string {
     fmt.sbprint(&sb, " ")
   }
 
-  return strings.to_string(sb)
+  return opcode, strings.to_string(sb)
 }
 
 @(private)

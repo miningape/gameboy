@@ -1,13 +1,10 @@
 package main
 
-import "core:fmt"
 import "core:log"
-import "core:os"
+
 import "cartridge"
 import "cpu"
 import "bus"
-import SDL "vendor:sdl2"
-
 import "./util/cli"
 import "./util/debugger"
 
@@ -21,12 +18,18 @@ main :: proc () {
   logger := log.create_console_logger(flags.debug ? .Debug : .Warning)
   context.logger = logger
 
+  stdin := cli.createListener(context.allocator)
+  defer cli.stopListener(stdin, context.allocator)
+
   rom := readCartridge(flags.file)
   bus := createBus(rom)
   cpu := createCpu(&bus)
   defer cleanup(&cpu)
 
-  debugger := debugger.create(&cpu)
+  debug: debugger.T
+  if flags.debug {
+    debug = debugger.create(&cpu, stdin, context.allocator)
+  }
 
-  emulate(&cpu, flags.debug ? &debugger : nil)
+  emulate(&cpu, flags.debug ? &debug : nil)
 }
