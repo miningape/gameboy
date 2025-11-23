@@ -42,7 +42,6 @@ destroyRenderer :: proc(renderer: ^T) {
 
 render :: proc(renderer: ^T) -> bool {
   event: SDL.Event
-
   if SDL.PollEvent(&event) {
     if (event.type == .QUIT) {
       return false

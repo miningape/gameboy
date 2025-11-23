@@ -14,7 +14,7 @@ emulate :: proc(cpu: ^e_cpu.Cpu, ppu: ^_ppu.T, debug: ^debugger.T) {
   log.debug("Starting emulation...")
 
   for !cpu.done {
-    if !_ppu.render(ppu) {
+    if ppu != nil && !_ppu.render(ppu) {
       cpu.done = true
       continue
     }
