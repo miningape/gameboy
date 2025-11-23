@@ -21,6 +21,7 @@ import "core:log"
 
 Bus :: struct {
   rom: []byte,
+  vram: []byte,
   ram: []byte,
   hram: []byte // Includes IE register
 }
@@ -29,6 +30,7 @@ createBus :: proc(rom: []byte) -> Bus {
   log.debug("Creating bus...")
   return Bus {
     rom, // Maybe bus should read rom?
+    make([]byte, 0x2000), // 8 KiB video ram (vram)
     make([]byte, 0x2000), // 8 KiB work ram (ram / wram)
     make([]byte, 0x0100), // 255 (ff) bytes high ram (hram) + IE register
   }
@@ -39,6 +41,10 @@ read :: proc(bus: ^Bus, location: u16) -> byte {
     // ROM cartridge, including 1 switch bank (i.e. no switching)
     case 0x0000..<0x8000:
       return bus.rom[location]
+
+    // Video RAM
+    case 0x8000..<0xA000:
+      return bus.vram[location - 0x8000]
 
     // Work RAM
     case 0xC000..<0xE000:
@@ -58,6 +64,11 @@ write :: proc(bus: ^Bus, location: u16, data: byte) {
     // ROM cartridge, including 1 switch bank (i.e. no switching)
     case 0x0000..<0x8000:
       panic("Cannot write to ROM cartridge")
+
+    // Video RAM
+    case 0x8000..<0xA000:
+      bus.vram[location - 0x8000] = data
+      return
 
     // Work RAM
     case 0xC000..<0xE000:
@@ -79,6 +90,10 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
     // ROM cartridge, including 1 switch bank (i.e. no switching)
     case 0x0000..<0x8000:
       return &bus.rom[location]
+
+    // Video RAM
+    case 0x8000..<0xA000:
+      return &bus.vram[location - 0x8000]
 
     // Work RAM
     case 0xC000..<0xE000:
