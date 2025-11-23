@@ -62,8 +62,7 @@ createListener :: proc(allocator: runtime.Allocator) -> ^Stdin {
 stopListener :: proc(stdin: ^Stdin, allocator: runtime.Allocator) {
   chan.close(stdin.channel)
 
-  _thread.terminate(stdin.thread, 0)
-  _thread.destroy(stdin.thread)
+  _thread.terminate(stdin.thread, 1)
 
   free(stdin, allocator)
 }

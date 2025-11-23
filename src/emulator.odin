@@ -3,16 +3,22 @@ package main
 import "core:log"
 
 import e_cpu "cpu"
+import _ppu "ppu"
 import "bus"
 import "cpu/instructions"
 import "util/debugger"
 
-emulate :: proc(cpu: ^e_cpu.Cpu, debug: ^debugger.T) {
+emulate :: proc(cpu: ^e_cpu.Cpu, ppu: ^_ppu.T, debug: ^debugger.T) {
   read := instructions.MAPPING()
   
   log.debug("Starting emulation...")
 
   for !cpu.done {
+    if !_ppu.render(ppu) {
+      cpu.done = true
+      continue
+    }
+
     if debug != nil {
       if !debugger.step(debug) {
         continue

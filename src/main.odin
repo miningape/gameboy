@@ -5,12 +5,14 @@ import "core:log"
 import "cartridge"
 import "cpu"
 import "bus"
+import "ppu"
 import "./util/cli"
 import "./util/debugger"
 
 main :: proc () {
   using cartridge
   using cpu
+  using ppu
   using bus
 
   flags := cli.getFlags()
@@ -26,10 +28,13 @@ main :: proc () {
   cpu := createCpu(&bus)
   defer cleanup(&cpu)
 
+  ppu := createRenderer()
+  defer destroyRenderer(&ppu)
+
   debug: debugger.T
   if flags.debug {
     debug = debugger.create(&cpu, stdin, context.allocator)
   }
 
-  emulate(&cpu, flags.debug ? &debug : nil)
+  emulate(&cpu, &ppu, flags.debug ? &debug : nil)
 }
