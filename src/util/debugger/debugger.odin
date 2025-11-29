@@ -51,6 +51,9 @@ create :: proc(cpu: ^_cpu.Cpu, stdin: ^cli.Stdin, allocator: runtime.Allocator) 
 step :: proc(debugger: ^T) -> bool {
   if !debugger.stepping {
     if !(debugger.cpu.registers.pc in debugger.breakpoints) {
+      opcode, description := resources.describeCurrentOpcode(debugger.cpu)
+      log.infof("$%04X = %#02X %s", debugger.cpu.registers.pc, opcode, description)
+      
       return true
     }
 
