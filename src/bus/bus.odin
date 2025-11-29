@@ -89,7 +89,8 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
   switch location {
     // ROM cartridge, including 1 switch bank (i.e. no switching)
     case 0x0000..<0x8000:
-      return &bus.rom[location]
+      panic("Cannot create a pointer to ROM")
+      // return &bus.rom[location]
 
     // Video RAM
     case 0x8000..<0xA000:
