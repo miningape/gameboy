@@ -28,7 +28,7 @@ main :: proc () {
   cpu := createCpu(&bus)
   defer cleanup(&cpu)
 
-  ppu := createRenderer()
+  ppu := createRenderer(&bus)
   defer destroyRenderer(&ppu)
 
   debug: debugger.T
