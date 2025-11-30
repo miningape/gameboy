@@ -12,19 +12,6 @@ next :: proc(debugger: ^T, args: []string) -> bool {
 }
 
 @(private)
-set :: proc(debugger: ^T, args: []string) -> bool {
-  switch args[1] {
-    case "breakpoint":
-      return setBreakpoint(debugger, args)
-      
-    case:
-      log.warnf("Unrecognised `set` target: %s", args[1])
-  }
-
-  return false
-}
-
-@(private)
 DEBUGGER_HELP :: `Emulator Debugger Help:
 This is the debugger - it's used to step through gameboy ROMs
 
