@@ -16,8 +16,7 @@ set :: proc(debugger: ^T, args: []string) -> bool {
         log.errorf("Incorrect args supplied to `set memory $address $value`,  %w", args)
       }
 
-      
-      address, parsedAddress := getAddress(args)
+      address, parsedAddress := getAddress(args, 2)
       if !parsedAddress {
         return false
       }
@@ -35,22 +34,6 @@ set :: proc(debugger: ^T, args: []string) -> bool {
   }
 
   return false
-}
-
-@(private="file")
-getAddress :: proc(args: []string) -> (u16, bool) {
-  str := args[2]
-  arg, parsed := strconv.parse_u64_maybe_prefixed(str)
-  if !parsed {
-    log.errorf("Could not parse uint \"%s\" in command %w (address, 3rd position)", str, args)
-    return 0, false
-  }
-
-  if arg > 0xFFFF {
-    log.warnf("Address %s out of range (0x0000 - 0xFFFF), truncating", str)
-  }
-
-  return u16(arg), true
 }
 
 @(private="file")
