@@ -32,7 +32,7 @@ createBus :: proc(rom: []byte) -> Bus {
     rom, // Maybe bus should read rom?
     make([]byte, 0x2000), // 8 KiB video ram (vram)
     make([]byte, 0x2000), // 8 KiB work ram (ram / wram)
-    make([]byte, 0x0100), // 255 (ff) bytes high ram (hram) + IE register
+    make([]byte, 0x0100), // 255 (ff) bytes I/O Registers + High RAM (hram) + IE Register
   }
 }
 
