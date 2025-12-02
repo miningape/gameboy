@@ -17,7 +17,7 @@ toComboRegister :: proc(registers: [2]^cpu.Register) -> ComboRegister {
   return {
     split = ({ registers[1]^, registers[0]^ }) when 
                 os.ENDIAN == .Little else 
-            ({reg[0]^, reg[1]^})
+            ({ reg[0]^, reg[1]^ })
   }
 }
 
