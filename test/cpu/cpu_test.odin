@@ -11,6 +11,7 @@ import "../lib"
 @require import "./jump"
 @require import "./load"
 @require import "./misc"
+@require import "./stack"
 
 @(test)
 shouldLoad :: proc (t: ^testing.T) {

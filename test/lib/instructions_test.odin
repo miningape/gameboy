@@ -14,6 +14,7 @@ JR_NC_i8 :: 0x30
 JR_C_i8 :: 0x38
 
 LD_BC_u16 :: 0x01
+LD_DE_u16 :: 0x11
 LD_HL_u16 :: 0x21
 
 LD_SP_HL :: 0xF9
@@ -21,6 +22,7 @@ LD_u16_ptr_SP :: 0x08
 
 LD_u16_ptr_A :: 0xEA
 LD_A_u16_ptr :: 0xFA
+LD_A_u8 :: 0x3E
 
 LDH_u8_A :: 0xE0
 LDH_A_u8 :: 0xF0
@@ -59,3 +61,14 @@ HALT :: 0x76
 SCF :: 0x37
 CCF :: 0x3F
 CPL :: 0x2F
+
+// Stack
+POP_BC :: 0xC1
+POP_DE :: 0xD1
+POP_HL :: 0xE1
+POP_AF :: 0xF1
+
+PUSH_BC :: 0xC5
+PUSH_DE :: 0xD5
+PUSH_HL :: 0xE5
+PUSH_AF :: 0xF5
