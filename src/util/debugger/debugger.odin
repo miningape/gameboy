@@ -22,7 +22,7 @@ T :: struct {
   breakpoints: map[u16]bool
 }
 
-create :: proc(cpu: ^_cpu.Cpu, stdin: ^cli.Stdin, allocator: runtime.Allocator) -> T {
+create :: proc(cpu: ^_cpu.Cpu, stdin: ^cli.Stdin) -> T {
   return T {
     cpu = cpu,
     stdin = stdin,

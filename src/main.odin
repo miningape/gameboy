@@ -33,7 +33,7 @@ main :: proc () {
 
   debug: debugger.T
   if flags.debug {
-    debug = debugger.create(&cpu, stdin, context.allocator)
+    debug = debugger.create(&cpu, stdin)
   }
 
   emulate(&cpu, &ppu, flags.debug ? &debug : nil)
