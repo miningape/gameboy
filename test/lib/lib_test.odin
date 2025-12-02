@@ -27,7 +27,7 @@ emulate :: proc(instructions: []byte, hook: proc(_: ^_cpu.Cpu) = proc(cpu: ^_cpu
 
   bus := _bus.createBus(rom)
   cpu := _cpu.createCpu(&bus)
-  defer _cpu.cleanup(&cpu)
+  defer _cpu.cleanup(&cpu, context.allocator)
 
   hook(&cpu)
   _emulator.emulate(&cpu, nil, nil)

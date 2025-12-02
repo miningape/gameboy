@@ -3,6 +3,7 @@ package cpu
 import "core:log"
 import "core:strings"
 import "core:fmt"
+import "base:runtime"
 
 import "../bus"
 
@@ -66,6 +67,6 @@ sprint :: proc(cpu: ^Cpu) -> string {
 }
 
 // Cleans up any references / memory the CPU owns
-cleanup :: proc(cpu: ^Cpu) {
-  bus.cleanupBus(cpu.bus)
+cleanup :: proc(cpu: ^Cpu, allocator: runtime.Allocator = context.allocator) {
+  bus.cleanupBus(cpu.bus, allocator)
 }

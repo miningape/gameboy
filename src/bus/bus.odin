@@ -1,6 +1,7 @@
 package bus
 
 import "core:log"
+import "base:runtime"
 
 // Will need to fill out more later 
 // Memory Bank Controllers (MBC): https://gbdev.io/pandocs/MBCs.html
@@ -109,8 +110,9 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
   panic("Tried to access an unmapped area of memory")
 }
 
-cleanupBus :: proc(bus: ^Bus) {
-  delete(bus.rom)
-  delete(bus.ram)
-  delete(bus.hram)
+cleanupBus :: proc(bus: ^Bus, allocator: runtime.Allocator = context.allocator) {
+  delete(bus.rom, allocator)
+  delete(bus.vram, allocator)
+  delete(bus.ram, allocator)
+  delete(bus.hram, allocator)
 }
