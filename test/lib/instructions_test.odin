@@ -72,3 +72,6 @@ PUSH_BC :: 0xC5
 PUSH_DE :: 0xD5
 PUSH_HL :: 0xE5
 PUSH_AF :: 0xF5
+
+CALL_u16 :: 0xCD
+CALL_Z_u16 :: 0xCC
