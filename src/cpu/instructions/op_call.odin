@@ -1,8 +1,8 @@
 package instructions
 
 import "core:log"
+
 import "../"
-import "../../bus"
 import "../operands"
 
 CALL :: proc(c: ^cpu.Cpu, instruction: Instruction) {
@@ -31,7 +31,31 @@ CALL :: proc(c: ^cpu.Cpu, instruction: Instruction) {
       panic("Cannot CALL u8")
   }
 
-  cpu.setFlagN(c, false)
-  cpu.setFlagH(c, false)
-  cpu.setFlagC(c, true)
+  // Flags not affected
+}
+
+@(private="file")
+RET_impl :: proc(c: ^cpu.Cpu) {
+  address := cpu.pop(c)
+  log.debugf("RET (%#04X)", address)
+  c.registers.pc = address
+}
+
+RET :: proc(c: ^cpu.Cpu, instruction: Instruction) {
+  cpu.incrementPC(c)
+
+  if instruction.left == nil {
+    RET_impl(c)
+    return
+  }
+
+  shouldReturn := instruction.left(c).(operands.Literal).(bool)
+  if shouldReturn {
+    RET_impl(c)
+    return
+  }
+  
+  log.debugf("RET (skipping)")
+
+  // Flags not affected
 }

@@ -61,3 +61,52 @@ shouldNotCallZ :: proc(t: ^testing.T) {
   testing.expect_value(t, cpu.registers.sp, 0xFFFE)
 }
 
+@(test)
+shouldReturn :: proc(t: ^testing.T) {
+  using cpu
+
+  cpu := lib.emulate({
+    0 = lib.RET,
+    1 = lib.HALT,
+    0x50 = lib.HALT
+  }, proc(cpu: ^Cpu) {
+    push(cpu, 0x0150)
+  })
+
+  testing.expect_value(t, cpu.registers.pc, 0x0150)
+  testing.expect_value(t, cpu.registers.sp, 0xFFFE)
+}
+
+@(test)
+shouldReturnZ :: proc(t: ^testing.T) {
+  using cpu
+
+  cpu := lib.emulate({
+    0 = lib.RET_Z,
+    1 = lib.HALT,
+    0x50 = lib.HALT
+  }, proc(cpu: ^Cpu) {
+    push(cpu, 0x0150)
+    setFlagZ(cpu, true)
+  })
+
+  testing.expect_value(t, cpu.registers.pc, 0x0150)
+  testing.expect_value(t, cpu.registers.sp, 0xFFFE)
+}
+
+@(test)
+shouldNotReturnZ :: proc(t: ^testing.T) {
+  using cpu
+
+  cpu := lib.emulate({
+    0 = lib.RET_Z,
+    1 = lib.HALT,
+    0x50 = lib.HALT
+  }, proc(cpu: ^Cpu) {
+    push(cpu, 0x0150)
+    setFlagZ(cpu, false)
+  })
+
+  testing.expect_value(t, cpu.registers.pc, 0x0101)
+  testing.expect_value(t, cpu.registers.sp, 0xFFFC)
+}

@@ -75,3 +75,6 @@ PUSH_AF :: 0xF5
 
 CALL_u16 :: 0xCD
 CALL_Z_u16 :: 0xCC
+
+RET :: 0xC9
+RET_Z :: 0xC8
