@@ -18,8 +18,8 @@ JP :: proc(c: ^cpu.Cpu, instruction: Instruction) {
           panic("Cannot JP to a u8")
 
         case u16: // JP u16
-        address := literal
-        log.debugf("jp u16 (%#04X)", address)
+          address := literal
+          log.debugf("jp u16 (%#04X)", address)
           c.registers.pc = address
 
         case bool: // JP NZ|Z|NC|C u16
