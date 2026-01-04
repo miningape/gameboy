@@ -50,29 +50,30 @@ LD_2_bytes :: proc(c: ^cpu.Cpu, i: Instruction) {
 
 LDI :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   // Only valid combinations are
-  // LD [HL+] A
   // LD A [HL+]
+  // LD [HL+] A
   // We always subtract from the combo register (HL), but read/write from the memory location
 
   cpu.incrementPC(c)
 
   switch register in instruction.left(c).(op.Register) {
-    case ^cpu.Register: // Read from 8 bit register
+    case ^cpu.Register: // Write to 8 bit register, from address at 16 bit combo register
       address_register := instruction.right(c).(op.Register).([2]^cpu.Register)
       address := cpu.unify(address_register)
 
-      bus.write(c.bus, address, register^)
-      address += 1
+      value := bus.read(c.bus, address)
+      register^ = value
 
+      address += 1
       address_register[0]^, address_register[1]^ = cpu.split(address)
 
-    case [2]^cpu.Register: // Write to address of combo register
+    case [2]^cpu.Register: // Write to address pointed to by 16 bit combo register, from 8 bit register
       address := cpu.unify(register)
       data_register := instruction.right(c).(op.Register).(^cpu.Register)
 
       bus.write(c.bus, address, data_register^)
-      address += 1
 
+      address += 1
       register[0]^, register[1]^ = cpu.split(address)
 
     case ^cpu.Register16:
@@ -84,29 +85,30 @@ LDI :: proc(c: ^cpu.Cpu, instruction: Instruction) {
 
 LDD :: proc(c: ^cpu.Cpu, instruction: Instruction) {
   // Only valid combinations are
-  // LD [HL-] A
   // LD A [HL-]
+  // LD [HL-] A
   // We always subtract from the combo register (HL), but read/write from the memory location
   
   cpu.incrementPC(c)
 
   switch register in instruction.left(c).(op.Register) {
-    case ^cpu.Register: // Read from 8 bit register
+    case ^cpu.Register: // Write to 8 bit register, from address pointed to by 16 bit combo register
       address_register := instruction.right(c).(op.Register).([2]^cpu.Register)
       address := cpu.unify(address_register)
 
-      bus.write(c.bus, address, register^)
-      address -= 1
+      value := bus.read(c.bus, address)
+      register^ = value
 
+      address -= 1
       address_register[0]^, address_register[1]^ = cpu.split(address)
     
-    case [2]^cpu.Register: // Write to address of combo register
+    case [2]^cpu.Register: // Write to address pointed to by 16 bit combo register, from 8 bit register
       address := cpu.unify(register)
       data_register := instruction.right(c).(op.Register).(^cpu.Register)
 
       bus.write(c.bus, address, data_register^)
-      address -= 1
 
+      address -= 1
       register[0]^, register[1]^ = cpu.split(address)
 
     case ^cpu.Register16:
