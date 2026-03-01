@@ -25,9 +25,9 @@ main :: proc () {
   defer cli.stopListener(stdin, context.allocator)
 
   rom := readCartridge(flags.file)
-  bus := createBus(rom)
+  bus := createBus(rom, context.allocator)
   cpu := createCpu(&bus)
-  defer cleanup(&cpu)
+  defer cleanup(&cpu, context.allocator)
 
   ppu := createRenderer(&bus)
   defer destroyRenderer(&ppu)

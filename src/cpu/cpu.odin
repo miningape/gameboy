@@ -67,6 +67,6 @@ sprint :: proc(cpu: ^Cpu) -> string {
 }
 
 // Cleans up any references / memory the CPU owns
-cleanup :: proc(cpu: ^Cpu, allocator: runtime.Allocator = context.allocator) {
+cleanup :: proc(cpu: ^Cpu, allocator: runtime.Allocator) {
   bus.cleanupBus(cpu.bus, allocator)
 }

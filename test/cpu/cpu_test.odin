@@ -16,10 +16,10 @@ import "../lib"
 @(test)
 shouldLoad :: proc (t: ^testing.T) {
   rom := lib.createRom([]byte{ lib.LD_BC_u16, 0x69, 0x69 })
-  bus := _bus.createBus(rom)
+  bus := _bus.createBus(rom, context.allocator)
 
   cpu := _cpu.createCpu(&bus)
-  defer _cpu.cleanup(&cpu)
+  defer _cpu.cleanup(&cpu, context.allocator)
 
   _emulator.emulate(&cpu, nil, nil)
 

@@ -27,13 +27,13 @@ Bus :: struct {
   hram: []byte // Includes IE register
 }
 
-createBus :: proc(rom: []byte) -> Bus {
+createBus :: proc(rom: []byte, allocator: runtime.Allocator) -> Bus {
   log.debug("Creating bus...")
   return Bus {
     rom, // Maybe bus should read rom?
-    make([]byte, 0x2000), // 8 KiB video ram (vram)
-    make([]byte, 0x2000), // 8 KiB work ram (ram / wram)
-    make([]byte, 0x0100), // 255 (ff) bytes I/O Registers + High RAM (hram) + IE Register
+    make([]byte, 0x2000, allocator), // 8 KiB video ram (vram)
+    make([]byte, 0x2000, allocator), // 8 KiB work ram (ram / wram)
+    make([]byte, 0x0100, allocator), // 255 (ff) bytes I/O Registers + High RAM (hram) + IE Register
   }
 }
 
@@ -110,7 +110,7 @@ pointer :: proc(bus: ^Bus, location: u16) -> ^byte {
   panic("Tried to access an unmapped area of memory")
 }
 
-cleanupBus :: proc(bus: ^Bus, allocator: runtime.Allocator = context.allocator) {
+cleanupBus :: proc(bus: ^Bus, allocator: runtime.Allocator) {
   delete(bus.rom, allocator)
   delete(bus.vram, allocator)
   delete(bus.ram, allocator)
