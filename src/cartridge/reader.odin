@@ -1,12 +1,11 @@
 package cartridge
 
 import "core:log"
-import "core:os"
-import "core:fmt"
+import os "core:os/os2"
 
 @(private = "file")
-assertRomSize :: proc(handle: os.Handle, stated: i64) -> (i64, os.Error) {
-  actual, error := os.file_size(handle)
+assertRomSize :: proc(file: ^os.File, stated: i64) -> (i64, os.Error) {
+  actual, error := os.file_size(file)
   if (error != nil) {
     return 0, error
   }
@@ -18,18 +17,18 @@ assertRomSize :: proc(handle: os.Handle, stated: i64) -> (i64, os.Error) {
 readCartridge :: proc(filepath: string) -> []byte {
   log.debug("Reading cartridge...")
 
-  handle, openErr := os.open(filepath)
+  file, openErr := os.open(filepath)
   if openErr != nil {
     log.error(openErr)
     panic("Error while opening a file")
   }
-  defer os.close(handle)
+  defer os.close(file)
 
-  header := getRomHeader(handle)
+  header := getRomHeader(file)
 
-  size, error := assertRomSize(handle, i64(header.sizeKiB * 1024))
-  if error != nil {
-    log.error(error)
+  size, err := assertRomSize(file, i64(header.sizeKiB * 1024))
+  if err != nil {
+    log.error(err)
     panic("Error while reading ROM size")
   }
 
@@ -37,7 +36,7 @@ readCartridge :: proc(filepath: string) -> []byte {
   log.debug("This rom is ", isRomValid(header) ? "uncorrupted" : "corrupted")
 
   buf := make([]byte, size)
-  _, error = os.read(handle, buf)
+  _, error := os.read(file, buf)
   if error != nil {
     log.error(error)
     panic("Error reading file")

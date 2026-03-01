@@ -1,6 +1,6 @@
 package cli
 
-import "core:os"
+import os "core:os/os2"
 import "core:flags"
 
 EmulatorFlags :: struct {

@@ -1,7 +1,6 @@
 package cartridge
 
-import "core:os"
-import "core:fmt"
+import os "core:os/os2"
 import "core:strings"
 
 // https://gbdev.io/pandocs/The_Cartridge_Header.html
@@ -59,9 +58,9 @@ RomHeader :: struct {
 }
 
 @(private = "file")
-readBytesAt :: proc(handle: os.Handle, offset: int, length: int) -> []byte {
+readBytesAt :: proc(file: ^os.File, offset: int, length: int) -> []byte {
   buffer := make([]byte, length)
-  bytesRead, err := os.read_at(handle, buffer, i64(offset))
+  bytesRead, err := os.read_at(file, buffer, i64(offset))
 
   if err != nil {
     panic(strings.join({"Encountered error while reading ROM:\n\t", os.error_string(err)}, ""))
@@ -75,8 +74,8 @@ readBytesAt :: proc(handle: os.Handle, offset: int, length: int) -> []byte {
 }
 
 @(private = "file")
-readByteAt :: proc(handle: os.Handle, offset: int) -> byte {
-  buffer := readBytesAt(handle, offset, 1)
+readByteAt :: proc(file: ^os.File, offset: int) -> byte {
+  buffer := readBytesAt(file, offset, 1)
 
   return buffer[0]
 }
@@ -85,8 +84,8 @@ readByteAt :: proc(handle: os.Handle, offset: int) -> byte {
 ROM_TITLE_PTR, ROM_TITLE_LENGTH :: 0x0134, 16
 
 @(private = "file")
-readRomTitle :: proc(handle: os.Handle) -> string {
-  buf := readBytesAt(handle, ROM_TITLE_PTR, ROM_TITLE_LENGTH)
+readRomTitle :: proc(file: ^os.File) -> string {
+  buf := readBytesAt(file, ROM_TITLE_PTR, ROM_TITLE_LENGTH)
 
   // Trim the end of 0x00 chars
   for buf[len(buf) - 1] == 0x00 {
@@ -101,8 +100,8 @@ readRomTitle :: proc(handle: os.Handle) -> string {
 CARTRIDGE_TYPE_PTR, ROM_SIZE_PTR, RAM_SIZE_PTR, ROM_VERSION_NUMBER_PTR :: 0x0147, 0x0148, 0x0149, 0x014C
 
 @(private = "file")
-readCartridgeType :: proc(handle: os.Handle) -> CartridgeType {
-  cartridgeType := readByteAt(handle, CARTRIDGE_TYPE_PTR)
+readCartridgeType :: proc(file: ^os.File) -> CartridgeType {
+  cartridgeType := readByteAt(file, CARTRIDGE_TYPE_PTR)
 
   for type in CartridgeType {
     if cartridgeType == u8(type) {
@@ -114,15 +113,15 @@ readCartridgeType :: proc(handle: os.Handle) -> CartridgeType {
 }
 
 @(private = "file")
-readRomSizeKiB :: proc(handle: os.Handle) -> i64 {
-  romSize := readByteAt(handle, ROM_SIZE_PTR)
+readRomSizeKiB :: proc(file: ^os.File) -> i64 {
+  romSize := readByteAt(file, ROM_SIZE_PTR)
 
   return 32 << romSize
 }
 
 @(private = "file")
-readRamSize :: proc(handle: os.Handle) -> RamSize {
-  ramSize := readByteAt(handle, RAM_SIZE_PTR)
+readRamSize :: proc(file: ^os.File) -> RamSize {
+  ramSize := readByteAt(file, RAM_SIZE_PTR)
 
   for type in RamSize {
     if ramSize == u8(type) {
@@ -134,8 +133,8 @@ readRamSize :: proc(handle: os.Handle) -> RamSize {
 }
 
 @(private = "file")
-readRomVersionNumber :: proc(handle: os.Handle) -> int {
-  version := readByteAt(handle, ROM_VERSION_NUMBER_PTR)
+readRomVersionNumber :: proc(file: ^os.File) -> int {
+  version := readByteAt(file, ROM_VERSION_NUMBER_PTR)
 
   return int(version)
 }
@@ -144,15 +143,15 @@ readRomVersionNumber :: proc(handle: os.Handle) -> int {
 HEADER_CHECKSUM_PTR, HEADER_CHECKSUM_LENGTH, HEADER_PARITY_BYTE :: 0x0134, 25, 0x014D
 
 @(private = "file")
-readRomChecksum :: proc(handle: os.Handle) -> (u8, byte) {
+readRomChecksum :: proc(file: ^os.File) -> (u8, byte) {
   checksum: u8 = 0
-  buffer := readBytesAt(handle, HEADER_CHECKSUM_PTR, HEADER_CHECKSUM_LENGTH)
+  buffer := readBytesAt(file, HEADER_CHECKSUM_PTR, HEADER_CHECKSUM_LENGTH)
 
   for cell in buffer {
     checksum = checksum - cell - 1
   }
 
-  parityByte := readByteAt(handle, HEADER_PARITY_BYTE)
+  parityByte := readByteAt(file, HEADER_PARITY_BYTE)
 
   return checksum, parityByte
 }
@@ -161,15 +160,15 @@ isRomValid :: proc(header: RomHeader) -> bool {
   return header.validation.checksum == header.validation.parityByte
 }
 
-getRomHeader :: proc(handle: os.Handle) -> RomHeader {
-  checksum, parityByte := readRomChecksum(handle)
+getRomHeader :: proc(file: ^os.File) -> RomHeader {
+  checksum, parityByte := readRomChecksum(file)
 
   return RomHeader {
-    title = readRomTitle(handle),
-    ramSize = readRamSize(handle),
-    sizeKiB = readRomSizeKiB(handle),
-    version = readRomVersionNumber(handle),
-    cartridgeType = readCartridgeType(handle),
+    title = readRomTitle(file),
+    ramSize = readRamSize(file),
+    sizeKiB = readRomSizeKiB(file),
+    version = readRomVersionNumber(file),
+    cartridgeType = readCartridgeType(file),
     validation = {
       checksum = checksum,
       parityByte = parityByte

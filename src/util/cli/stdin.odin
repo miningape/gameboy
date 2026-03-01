@@ -1,7 +1,7 @@
 package cli
 
 import "base:runtime"
-import "core:os"
+import os "core:os/os2"
 import "core:log"
 import "core:time"
 import "core:sync/chan"

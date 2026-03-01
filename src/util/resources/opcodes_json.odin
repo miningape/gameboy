@@ -1,9 +1,10 @@
 package resources
 
+import "base:runtime"
 import "core:strings"
 import "core:fmt"
 import "core:log"
-import "core:os"
+import os "core:os/os2"
 import "core:encoding/json"
 
 import "../../cpu"
@@ -42,10 +43,11 @@ Opcodes :: struct {
 opcodes: Opcodes
 
 @(private)
-lazyLoadOpcodeDescriptions :: proc () {
+lazyLoadOpcodeDescriptions :: proc (allocator: runtime.Allocator) {
   if opcodes.unprefixed == nil || opcodes.cbprefixed == nil {
-    bytes, success := os.read_entire_file("./resources/opcodes.json")
-    if !success {
+    bytes, error := os.read_entire_file("./resources/opcodes.json", allocator)
+    if error != nil {
+      log.error(os.error_string(error))
       panic("Error while reading opcodes.json")
     }
 
@@ -58,7 +60,7 @@ lazyLoadOpcodeDescriptions :: proc () {
 }
 
 describeCurrentOpcode :: proc(c: ^cpu.Cpu) -> (byte, string) {
-  lazyLoadOpcodeDescriptions()
+  lazyLoadOpcodeDescriptions(context.allocator)
   
   pc := c.registers.pc
   opcode := c.bus.rom[pc]
