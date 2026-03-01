@@ -1,3 +1,4 @@
+#+feature using-stmt
 package cpu_math_test
 
 import "core:testing"

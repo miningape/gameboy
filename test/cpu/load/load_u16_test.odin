@@ -1,3 +1,4 @@
+#+feature using-stmt
 package cpu_load_test
 
 import "core:testing"

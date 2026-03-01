@@ -1,10 +1,10 @@
+#+feature using-stmt
 package cpu_misc_test
 
 import "core:testing"
 
 import "../../lib"
 import _cpu "../../../src/cpu"
-
 
 @(test)
 shouldSetCarryFlag :: proc(t: ^testing.T) {

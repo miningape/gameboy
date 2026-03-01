@@ -75,11 +75,11 @@ step :: proc(debugger: ^T) -> bool {
   }
 
   debugger.logged = false
-  command, err := strings.split(input, " ") // Will get messed up but multiple spaces "  "
+  command, err := strings.split(input, " ") // Will get messed up by multiple spaces "  "
 
   fn, found := debugger.commands[command[0]]
   if !found {
-    log.debugf("Command \"&s\" was not recognized!", command)
+    log.debugf("Command \"%s\" was not recognized!", command[0])
     return false
   }
 
