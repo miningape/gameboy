@@ -1,7 +1,7 @@
 package cartridge
 
 import "core:log"
-import os "core:os/os2"
+import os "core:os"
 
 @(private = "file")
 assertRomSize :: proc(file: ^os.File, stated: i64) -> (i64, os.Error) {

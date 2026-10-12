@@ -51,19 +51,19 @@ next2BytesPtr :: proc(c: ^cpu.Cpu) -> op.Operand {
 }
 
 Z :: proc(c: ^cpu.Cpu) -> op.Operand {
-  return cpu.getFlagZ(c) == true
+  return op.Literal(cpu.getFlagZ(c) == true)
 }
 
 NZ :: proc(c: ^cpu.Cpu) -> op.Operand {
-  return cpu.getFlagZ(c) == false
+  return op.Literal(cpu.getFlagZ(c) == false)
 }
 
 C :: proc(c: ^cpu.Cpu) -> op.Operand {
-  return cpu.getFlagC(c) == true
+  return op.Literal(cpu.getFlagC(c) == true)
 }
 
 NC :: proc(c: ^cpu.Cpu) -> op.Operand {
-  return cpu.getFlagC(c) == false
+  return op.Literal(cpu.getFlagC(c) == false)
 }
 
 HALT :: proc(c: ^cpu.Cpu, i: Instruction) {

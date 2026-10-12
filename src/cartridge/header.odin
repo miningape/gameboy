@@ -1,6 +1,6 @@
 package cartridge
 
-import os "core:os/os2"
+import os "core:os"
 import "core:strings"
 
 // https://gbdev.io/pandocs/The_Cartridge_Header.html
